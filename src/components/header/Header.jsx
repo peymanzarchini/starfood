@@ -5,6 +5,8 @@ import { AiOutlineUser } from "react-icons/ai";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FaTimes } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { selectAllCart } from "../../reducer/cartSlice";
 
 function Header() {
   const navlinks = [
@@ -18,6 +20,8 @@ function Header() {
   const [showMenu, setShowMenu] = useState(false);
   const [changePosition, setChangePosition] = useState(false);
   const location = useLocation();
+
+  const cart = useSelector(selectAllCart);
 
   useEffect(() => {
     function handleChangeSize() {
@@ -94,9 +98,11 @@ function Header() {
           <div className="flex items-center space-x-4">
             <div className="relative">
               <BsBasket fontSize={"23px"} className="cursor-pointer" />
-              <span className="absolute right-3 top-[-5px] z-0 mr-2 rounded-full bg-red-500 px-2.5 py-0.5 text-xs font-medium text-white">
-                0
-              </span>
+              {cart.length > 0 ? (
+                <span className="absolute right-3 top-[-5px] z-0 mr-2 rounded-full bg-red-500 px-2.5 py-0.5 text-xs font-medium text-white">
+                  {cart.length}
+                </span>
+              ) : null}
             </div>
             <AiOutlineUser fontSize={"23px"} className="cursor-pointer" />
             {mediaQuery ? (

@@ -44,7 +44,7 @@ const products = [
     image02: product_02_image_02,
     image03: product_02_image_03,
     category: "Pizza",
-
+    quantity: 1,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
   },
 
@@ -56,7 +56,7 @@ const products = [
     image02: product_03_image_02,
     image03: product_03_image_03,
     category: "Pizza",
-
+    quantity: 1,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
   },
 
@@ -68,7 +68,7 @@ const products = [
     image02: product_04_image_02,
     image03: product_04_image_03,
     category: "Pizza",
-
+    quantity: 1,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
   },
 
@@ -80,7 +80,7 @@ const products = [
     image02: product_05_image_02,
     image03: product_05_image_03,
     category: "Burger",
-
+    quantity: 1,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
   },
   {
@@ -91,7 +91,7 @@ const products = [
     image02: product_01_image_02,
     image03: product_01_image_03,
     category: "Burger",
-
+    quantity: 1,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
   },
 
@@ -103,7 +103,7 @@ const products = [
     image02: product_02_image_01,
     image03: product_02_image_03,
     category: "Pizza",
-
+    quantity: 1,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
   },
 
@@ -115,7 +115,7 @@ const products = [
     image02: product_03_image_01,
     image03: product_03_image_03,
     category: "Pizza",
-
+    quantity: 1,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
   },
 
@@ -127,7 +127,7 @@ const products = [
     image02: product_04_image_01,
     image03: product_04_image_03,
     category: "Pizza",
-
+    quantity: 1,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
   },
 
@@ -139,7 +139,7 @@ const products = [
     image02: product_05_image_01,
     image03: product_05_image_03,
     category: "Burger",
-
+    quantity: 1,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
   },
 
@@ -151,7 +151,7 @@ const products = [
     image02: product_06_image_02,
     image03: product_06_image_03,
     category: "Bread",
-
+    quantity: 1,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
   },
 
@@ -163,7 +163,7 @@ const products = [
     image02: product_06_image_01,
     image03: product_06_image_03,
     category: "Bread",
-
+    quantity: 1,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
   },
 
@@ -175,7 +175,7 @@ const products = [
     image02: product_06_image_02,
     image03: product_06_image_03,
     category: "Bread",
-
+    quantity: 1,
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
   },
 ];
