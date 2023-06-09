@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 
 function Header() {
   const navlinks = [
-    { display: "Home", path: "/home" },
+    { display: "Home", path: "/" },
     { display: "Foods", path: "/foods" },
     { display: "Cart", path: "/cart" },
     { display: "Contact", path: "/contact" },
@@ -64,7 +64,7 @@ function Header() {
       <div className="mx-auto max-w-[1500px] px-[2.4rem]">
         <div className="flex items-center justify-between">
           <div className="text-3xl font-semibold">
-            <Link to="/home">
+            <Link to="/">
               StarF<span className="text-red-600">oo</span>D
             </Link>
           </div>
@@ -73,10 +73,7 @@ function Header() {
               showMenu ? "left-0" : "left-[-100%]"
             }  flex min-h-full w-72 list-none flex-col items-center justify-start bg-black transition-all duration-300 md:static md:flex md:flex-row md:space-x-5 md:bg-transparent`}
           >
-            <Link
-              to="/home"
-              className="mb-5 mt-24 text-3xl font-semibold italic text-white md:hidden"
-            >
+            <Link to="/" className="mb-5 mt-24 text-3xl font-semibold italic text-white md:hidden">
               StarF<span className="text-red-600">oo</span>D
             </Link>
             <li className="absolute right-5 top-5 text-white md:hidden">

@@ -11,8 +11,7 @@ import Register from "../pages/Register";
 function Routers() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/home" />} />
-      <Route path="/home" element={<Home />} />
+      <Route path="/" element={<Home />} />
       <Route path="/foods" element={<AllFoods />} />
       <Route path="/foods/:id" element={<FoodDetails />} />
       <Route path="/cart" element={<Cart />} />

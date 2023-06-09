@@ -1,3 +1,5 @@
+import Footer from "../components/footer/Footer";
+import CopyRight from "../components/footer/CopyRight";
 import Hero from "../components/hero/Hero";
 import PhotosGallery from "../components/photoAlbum/PhotosGallery";
 import Popular from "../components/popular/Popular";
@@ -9,7 +11,7 @@ import Testimonials from "../components/testimonials/Testimonials";
 function Home() {
   return (
     <>
-      <section className="min-h-[89vh] w-[100%] bg-gray-200 bg-cover bg-center  py-[3rem]">
+      <section className="min-h-[89vh] w-[100%] bg-gray-200 bg-cover bg-center  pt-[3rem]">
         <div className="mx-auto max-w-[1500px] px-[2.4rem]">
           <Hero />
           <Serve />
@@ -19,6 +21,8 @@ function Home() {
           <Register />
           <Team />
         </div>
+        <Footer />
+        <CopyRight />
       </section>
     </>
   );
