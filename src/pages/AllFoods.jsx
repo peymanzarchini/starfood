@@ -7,6 +7,24 @@ import CopyRight from "../components/footer/CopyRight";
 
 function AllFoods() {
   const [allProducts, setAllProducts] = useState(products);
+  const [getSort, setSort] = useState("");
+
+  const handleSortItem = (e) => {
+    if (e.target.value === "all") {
+      setSort(e.target.value);
+      setAllProducts(products);
+    } else if (e.target.value === "high") {
+      setSort(e.target.value);
+      setAllProducts(products.filter((item) => item.price >= 50));
+    } else if (e.target.value === "low") {
+      setSort(e.target.value);
+      setAllProducts(products.filter((item) => item.price < 50));
+    } else {
+      setSort(e.target.value);
+      setAllProducts(products);
+    }
+  };
+
   return (
     <>
       <section className="backgroundImageFood h-64 w-full">
@@ -29,13 +47,14 @@ function AllFoods() {
             </div>
             <div className="w-[50%]">
               <select
-                defaultValue={"All Foods"}
+                value={getSort}
+                onChange={handleSortItem}
                 className="text-md block w-full appearance-none rounded-lg border border-gray-400 bg-gray-200 p-4 focus:border-red-600 focus:ring-red-600"
               >
-                <option value="All Foods">All Foods</option>
-                <option value="Burger">Burger</option>
-                <option value="Pizza">Pizza</option>
-                <option value="Bread">Bread</option>
+                <option value="">Search by Price</option>
+                <option value="all">All</option>
+                <option value="high">High Price</option>
+                <option value="low">Low Price</option>
               </select>
             </div>
           </div>
