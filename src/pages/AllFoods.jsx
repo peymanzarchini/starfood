@@ -7,7 +7,10 @@ import CopyRight from "../components/footer/CopyRight";
 
 function AllFoods() {
   const [allProducts, setAllProducts] = useState(products);
+  const [query, setQuery] = useState("");
   const [getSort, setSort] = useState("");
+
+  const key = ["title"];
 
   const handleSortItem = (e) => {
     if (e.target.value === "all") {
@@ -25,6 +28,10 @@ function AllFoods() {
     }
   };
 
+  const handleSearchItem = (data) => {
+    return data.filter((item) => key.some((k) => item[k].toLowerCase().includes(query)));
+  };
+
   return (
     <>
       <section className="backgroundImageFood h-64 w-full">
@@ -37,9 +44,11 @@ function AllFoods() {
           <div className="flex items-center justify-between gap-3 pt-10">
             <div className="relative w-[50%]">
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-5">
-                <BsSearch className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                {query === "" && <BsSearch className="h-5 w-5 text-gray-500 dark:text-gray-400" />}
               </div>
               <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
                 type="search"
                 className="text-md block w-full appearance-none rounded-lg border border-gray-400 bg-gray-200 p-4 focus:border-red-600 focus:ring-red-600"
                 placeholder="Search"
@@ -59,11 +68,14 @@ function AllFoods() {
             </div>
           </div>
           <div className="grid gap-5 pt-10 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-            {allProducts.map((product) => (
+            {handleSearchItem(allProducts).map((product) => (
               <Foods item={product} key={product.id} />
             ))}
           </div>
         </div>
+        {handleSearchItem(allProducts).length === 0 && (
+          <h1 className="text-center text-3xl text-red-600">No food found</h1>
+        )}
       </section>
       <section>
         <Footer />
