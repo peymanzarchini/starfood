@@ -28,7 +28,7 @@ function Hero() {
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-center gap-32 lg:flex-nowrap">
+      <div className="flex flex-wrap items-center justify-center gap-32 lg:flex-nowrap lg:justify-between lg:gap-0">
         <div className="text-center lg:text-left">
           <p className="mb-3 text-3xl font-medium italic">Easy way to make an order</p>
           <h1 className="text-6xl font-bold leading-[5rem]">
