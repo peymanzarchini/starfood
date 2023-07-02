@@ -97,12 +97,14 @@ function Header() {
           </ul>
           <div className="flex items-center space-x-4">
             <div className="relative">
-              <BsBasket fontSize={"23px"} className="cursor-pointer" />
-              {cart.length > 0 ? (
-                <span className="absolute right-3 top-[-5px] z-0 mr-2 rounded-full bg-red-500 px-2.5 py-0.5 text-xs font-medium text-white">
-                  {cart.length}
-                </span>
-              ) : null}
+              <Link to={"/cart"}>
+                <BsBasket fontSize={"23px"} className="cursor-pointer" />
+                {cart.length > 0 ? (
+                  <span className="absolute right-3 top-[-5px] z-0 mr-2 rounded-full bg-red-500 px-2.5 py-0.5 text-xs font-medium text-white">
+                    {cart.length}
+                  </span>
+                ) : null}
+              </Link>
             </div>
             <AiOutlineUser fontSize={"23px"} className="cursor-pointer" />
             {mediaQuery ? (

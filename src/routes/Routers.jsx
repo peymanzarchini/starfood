@@ -13,7 +13,7 @@ function Routers() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/foods" element={<AllFoods />} />
-      <Route path="/foods/:id" element={<FoodDetails />} />
+      <Route path="/foods/:foodId" element={<FoodDetails />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/checkout" element={<Checkout />} />
       <Route path="/contact" element={<Contact />} />
