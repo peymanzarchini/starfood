@@ -2,8 +2,6 @@ import { BsSearch } from "react-icons/bs";
 import { useState } from "react";
 import products from "../assets/data/products";
 import Foods from "../components/popular/Foods";
-import Footer from "../components/footer/Footer";
-import CopyRight from "../components/footer/CopyRight";
 
 function AllFoods() {
   const [allProducts, setAllProducts] = useState(products);
@@ -76,10 +74,6 @@ function AllFoods() {
         {handleSearchItem(allProducts).length === 0 && (
           <h1 className="text-center text-3xl text-red-600">No food found</h1>
         )}
-      </section>
-      <section>
-        <Footer />
-        <CopyRight />
       </section>
     </>
   );

@@ -1,5 +1,3 @@
-import Footer from "../components/footer/Footer";
-import CopyRight from "../components/footer/CopyRight";
 import Hero from "../components/hero/Hero";
 import PhotosGallery from "../components/photoAlbum/PhotosGallery";
 import Popular from "../components/popular/Popular";
@@ -21,8 +19,6 @@ function Home() {
           <Register />
           <Team />
         </div>
-        <Footer />
-        <CopyRight />
       </section>
     </>
   );
