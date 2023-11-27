@@ -17,7 +17,7 @@ const Login = () => {
     <section className="py-5">
       <h1 className="text-center text-3xl font-semibold text-gray-700">Sign in</h1>
       <div className="mx-auto max-w-[1500px] px-[2.4rem]">
-        <div className="flex flex-wrap items-center justify-between gap-12 py-10 lg:flex-nowrap">
+        <div className="flex flex-wrap items-center justify-center gap-12 py-10 lg:flex-nowrap lg:justify-between">
           <div className="w-[95%] sm:w-[60%] lg:w-[50%]">
             <img src={LoginPhoto} alt="signin" className="mx-auto rounded-sm" />
           </div>
