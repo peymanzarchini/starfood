@@ -4,7 +4,7 @@ import Footer from "../components/footer/Footer";
 import CopyRight from "../components/footer/CopyRight";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addCart } from "../reducer/cartSlice";
+import { addCart } from "../reducer/userSlice";
 
 function FoodDetails() {
   const dispatch = useDispatch();

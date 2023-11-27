@@ -1,13 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  currentUser: null,
   cart: [],
 };
 
-const cartSlice = createSlice({
+const userSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+    signInSuccess: (state, action) => {
+      state.currentUser = action.payload;
+    },
+    signOutSuccess: (state, action) => {
+      state.currentUser = null;
+    },
     addCart: (state, action) => {
       let existProduct = state.cart.filter((item) => item.id === action.payload.id);
       if (existProduct < 1) {
@@ -41,5 +48,6 @@ const cartSlice = createSlice({
 });
 
 export const selectAllCart = (state) => state.cart.cart;
-export const { addCart, removeCart, increase, decrease } = cartSlice.actions;
-export default cartSlice.reducer;
+export const { addCart, removeCart, increase, decrease, signInSuccess, signOutSuccess } =
+  userSlice.actions;
+export default userSlice.reducer;

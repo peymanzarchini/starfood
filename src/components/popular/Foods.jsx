@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { addCart } from "../../reducer/cartSlice";
+import { addCart } from "../../reducer/userSlice";
 
 function Foods({ item }) {
   const dispatch = useDispatch();

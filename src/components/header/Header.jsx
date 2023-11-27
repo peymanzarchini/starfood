@@ -6,13 +6,13 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { FaTimes } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectAllCart } from "../../reducer/cartSlice";
+import { selectAllCart } from "../../reducer/userSlice";
 
 function Header() {
   const navlinks = [
     { display: "Home", path: "/" },
+    { display: "About", path: "/about" },
     { display: "Foods", path: "/foods" },
-    { display: "Cart", path: "/cart" },
     { display: "Contact", path: "/contact" },
   ];
 
@@ -38,7 +38,7 @@ function Header() {
 
   useEffect(() => {
     function handleChangeScroll() {
-      if (window.scrollY >= 20) {
+      if (window.scrollY >= 250) {
         setChangePosition(true);
       } else {
         setChangePosition(false);
@@ -61,7 +61,7 @@ function Header() {
 
   return (
     <header
-      className={`w-[100%] bg-gray-200 py-[1.5rem] transition duration-500 ${
+      className={`w-[100%] bg-gray-200 py-[1.5rem] transition duration-1000 ${
         changePosition ? "fixed z-20 shadow-xl" : "static"
       }`}
     >
@@ -106,7 +106,9 @@ function Header() {
                 ) : null}
               </Link>
             </div>
-            <AiOutlineUser fontSize={"23px"} className="cursor-pointer" />
+            <Link to="/login">
+              <AiOutlineUser fontSize={"23px"} className="cursor-pointer" />
+            </Link>
             {mediaQuery ? (
               <GiHamburgerMenu
                 onClick={handleShowMenu}
