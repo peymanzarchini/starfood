@@ -1,12 +1,15 @@
+import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { BsBasket } from "react-icons/bs";
 import { AiOutlineUser } from "react-icons/ai";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FaTimes } from "react-icons/fa";
+import { IoIosLogOut, IoMdArrowDropdown } from "react-icons/io";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { selectAllCart } from "../../reducer/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { signOutSuccess } from "../../reducer/userSlice";
+import { Menu, Transition } from "@headlessui/react";
 
 function Header() {
   const navlinks = [
@@ -19,9 +22,12 @@ function Header() {
   const [mediaQuery, setMediaQuery] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [changePosition, setChangePosition] = useState(false);
-  const location = useLocation();
 
-  const cart = useSelector(selectAllCart);
+  const location = useLocation();
+  const dispatch = useDispatch();
+
+  const user = useSelector((state) => state.user.currentUser);
+  const cart = useSelector((state) => state.user.cart);
 
   useEffect(() => {
     function handleChangeSize() {
@@ -99,16 +105,61 @@ function Header() {
             <div className="relative">
               <Link to={"/cart"}>
                 <BsBasket fontSize={"23px"} className="cursor-pointer" />
-                {cart.length > 0 ? (
+                {cart?.length > 0 ? (
                   <span className="absolute right-3 top-[-5px] z-0 mr-2 rounded-full bg-red-500 px-2.5 py-0.5 text-xs font-medium text-white">
                     {cart.length}
                   </span>
                 ) : null}
               </Link>
             </div>
-            <Link to="/login">
-              <AiOutlineUser fontSize={"23px"} className="cursor-pointer" />
-            </Link>
+            {user ? (
+              <Menu as="div" className="relative inline-block text-left">
+                <div>
+                  <Menu.Button className="inline-flex w-full justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium text-white hover:opacity-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+                    <img
+                      src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png"
+                      alt="avatar"
+                      className="h-10 w-10 rounded-full object-cover"
+                    />
+                  </Menu.Button>
+                </div>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute right-[75px] mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="px-1 py-1">
+                      <Menu.Item>
+                        <div className="group flex w-full cursor-pointer items-center gap-2 rounded-md hover:bg-slate-500">
+                          {user?.fullname}
+                        </div>
+                      </Menu.Item>
+                    </div>
+                    <div className="px-1 py-1">
+                      <Menu.Item>
+                        <div className="group flex w-full cursor-pointer items-center gap-2 rounded-md hover:bg-slate-500">
+                          <Link to="/" className="flex items-center gap-3">
+                            <IoIosLogOut fontSize={23} />
+                            <p className="text-base" onClick={() => dispatch(signOutSuccess())}>
+                              Logout
+                            </p>
+                          </Link>
+                        </div>
+                      </Menu.Item>
+                    </div>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+            ) : (
+              <Link to="/login">
+                <AiOutlineUser fontSize={"23px"} className="cursor-pointer" />
+              </Link>
+            )}
             {mediaQuery ? (
               <GiHamburgerMenu
                 onClick={handleShowMenu}

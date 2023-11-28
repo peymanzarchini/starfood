@@ -14,6 +14,7 @@ const userSlice = createSlice({
     },
     signOutSuccess: (state, action) => {
       state.currentUser = null;
+      state.cart = [];
     },
     addCart: (state, action) => {
       let existProduct = state.cart.filter((item) => item.id === action.payload.id);
@@ -47,7 +48,6 @@ const userSlice = createSlice({
   },
 });
 
-export const selectAllCart = (state) => state.cart.cart;
 export const { addCart, removeCart, increase, decrease, signInSuccess, signOutSuccess } =
   userSlice.actions;
 export default userSlice.reducer;

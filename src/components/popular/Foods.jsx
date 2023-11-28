@@ -1,9 +1,18 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { addCart } from "../../reducer/userSlice";
+import { useState } from "react";
+import ModalAuth from "../modal/ModalAuth";
 
 function Foods({ item }) {
+  const user = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
+
+  const [openModalLogin, setOpenModalLogin] = useState(false);
+
+  const handleCloseModal = () => {
+    setOpenModalLogin(false);
+  };
 
   return (
     <div className="rounded-lg p-4 text-center shadow-xl">
@@ -23,21 +32,24 @@ function Foods({ item }) {
         <button
           type="button"
           className="rounded-md bg-red-600 px-5 py-3 text-white"
-          onClick={() =>
-            dispatch(
-              addCart({
-                id: item.id,
-                title: item.title,
-                price: item.price,
-                image: item.image01,
-                category: item.category,
-                quantity: item.quantity,
-              })
-            )
-          }
+          onClick={() => {
+            !user
+              ? setOpenModalLogin(true)
+              : dispatch(
+                  addCart({
+                    id: item.id,
+                    title: item.title,
+                    price: item.price,
+                    image: item.image01,
+                    category: item.category,
+                    quantity: item.quantity,
+                  })
+                );
+          }}
         >
           Add To Cart
         </button>
+        {openModalLogin && <ModalAuth closeModal={handleCloseModal} />}
       </div>
     </div>
   );
