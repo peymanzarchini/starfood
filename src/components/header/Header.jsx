@@ -5,7 +5,7 @@ import { BsBasket } from "react-icons/bs";
 import { AiOutlineUser } from "react-icons/ai";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FaTimes } from "react-icons/fa";
-import { IoIosLogOut, IoMdArrowDropdown } from "react-icons/io";
+import { IoIosLogOut } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { signOutSuccess } from "../../reducer/userSlice";
@@ -16,7 +16,6 @@ function Header() {
     { display: "Home", path: "/" },
     { display: "About", path: "/about" },
     { display: "Foods", path: "/foods" },
-    { display: "Contact", path: "/contact" },
   ];
 
   const [mediaQuery, setMediaQuery] = useState(false);
