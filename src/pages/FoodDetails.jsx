@@ -1,7 +1,5 @@
 import { useParams } from "react-router-dom";
 import products from "../assets/data/products";
-import Footer from "../components/footer/Footer";
-import CopyRight from "../components/footer/CopyRight";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addCart } from "../reducer/userSlice";
@@ -89,10 +87,6 @@ function FoodDetails() {
             </div>
           </div>
         </div>
-      </section>
-      <section>
-        <Footer />
-        <CopyRight />
       </section>
     </>
   );

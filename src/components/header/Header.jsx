@@ -43,7 +43,7 @@ function Header() {
 
   useEffect(() => {
     function handleChangeScroll() {
-      if (window.scrollY >= 300) {
+      if (window.scrollY >= 400) {
         setChangePosition(true);
       } else {
         setChangePosition(false);
