@@ -3,16 +3,22 @@ import products from "../assets/data/products";
 import Footer from "../components/footer/Footer";
 import CopyRight from "../components/footer/CopyRight";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addCart } from "../reducer/userSlice";
+import ModalAuth from "../components/modal/ModalAuth";
 
 function FoodDetails() {
+  const user = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
   const params = useParams();
-  const singleProduct = products.find((p) => p.id === params.foodId);
 
+  const [openModalLogin, setOpenModalLogin] = useState(false);
+  const singleProduct = products.find((p) => p.id === params.foodId);
   const [prevImage, setPrevImage] = useState(singleProduct.image01);
 
+  const handleCloseModal = () => {
+    setOpenModalLogin(false);
+  };
   return (
     <>
       <section className="backgroundImageFood h-64 w-full">
@@ -62,21 +68,24 @@ function FoodDetails() {
               <button
                 type="button"
                 className="rounded-md bg-red-600 px-5 py-3 text-white"
-                onClick={() =>
-                  dispatch(
-                    addCart({
-                      id: singleProduct.id,
-                      title: singleProduct.title,
-                      price: singleProduct.price,
-                      image: singleProduct.image01,
-                      category: singleProduct.category,
-                      quantity: singleProduct.quantity,
-                    })
-                  )
-                }
+                onClick={() => {
+                  !user
+                    ? setOpenModalLogin(true)
+                    : dispatch(
+                        addCart({
+                          id: item.id,
+                          title: item.title,
+                          price: item.price,
+                          image: item.image01,
+                          category: item.category,
+                          quantity: item.quantity,
+                        })
+                      );
+                }}
               >
                 Add To Cart
               </button>
+              {openModalLogin && <ModalAuth closeModal={handleCloseModal} />}
             </div>
           </div>
         </div>
