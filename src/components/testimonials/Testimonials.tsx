@@ -2,10 +2,9 @@ import ben from "../../assets/images/ben.jpg";
 import dave from "../../assets/images/dave.jpg";
 import hannah from "../../assets/images/hannah.jpg";
 import steve from "../../assets/images/steve.jpg";
-
 import networkImg from "../../assets/images/network.webp";
 
-function Testimonials() {
+const Testimonials = () => {
   return (
     <section className="mt-60 w-[100%] py-10">
       <h1 className="mb-3 text-2xl font-bold text-starfood-colorText">Testimonials</h1>
@@ -51,6 +50,6 @@ function Testimonials() {
       </div>
     </section>
   );
-}
+};
 
 export default Testimonials;

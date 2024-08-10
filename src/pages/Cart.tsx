@@ -1,12 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { FaRegTrashAlt, FaPlus, FaMinus } from "react-icons/fa";
-import { decrease, increase, removeCart } from "../reducer/userSlice";
+import { decrease, increase, removeCart } from "../reducer/cartSlice";
+import { AppDispatch, RootState } from "../app/index";
 
 const Cart = () => {
-  const cart = useSelector((state) => state.user.cart);
-  const dispatch = useDispatch();
+  const cart = useSelector((state: RootState) => state.cart.cart);
+  const dispatch = useDispatch<AppDispatch>();
 
-  const addition = (acc, currentvalue) => {
+  const addition = (acc: number, currentvalue: { price: number; quantity: number }) => {
     return acc + currentvalue.price * currentvalue.quantity;
   };
 

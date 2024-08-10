@@ -23,7 +23,19 @@ import product_06_image_01 from "../images/bread(1).png";
 import product_06_image_02 from "../images/bread(2).png";
 import product_06_image_03 from "../images/bread(3).png";
 
-const products = [
+export interface Product {
+  id: string;
+  title: string;
+  price: number;
+  image01: string;
+  image02: string;
+  image03: string;
+  category: string;
+  quantity: number;
+  desc: string;
+}
+
+const products: Product[] = [
   {
     id: "01",
     title: "Chicken Burger",

@@ -1,14 +1,16 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { addCart } from "../../reducer/userSlice";
+import { addCart } from "../../reducer/cartSlice";
 import { useState } from "react";
 import ModalAuth from "../modal/ModalAuth";
+import { RootState } from "../../app/index";
+import { Product } from "../../assets/data/products";
 
-function Foods({ item }) {
-  const user = useSelector((state) => state.user.currentUser);
+const Foods = ({ item }: { item: Product }) => {
+  const user = useSelector((state: RootState) => state.user.currentUser);
   const dispatch = useDispatch();
 
-  const [openModalLogin, setOpenModalLogin] = useState(false);
+  const [openModalLogin, setOpenModalLogin] = useState<boolean>(false);
 
   const handleCloseModal = () => {
     setOpenModalLogin(false);
@@ -53,6 +55,6 @@ function Foods({ item }) {
       </div>
     </div>
   );
-}
+};
 
 export default Foods;

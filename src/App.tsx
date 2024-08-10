@@ -1,7 +1,7 @@
 import MainLayout from "./components/Layout/MainLayout";
 
-function App() {
+const App = () => {
   return <MainLayout />;
-}
+};
 
 export default App;

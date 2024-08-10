@@ -13,7 +13,7 @@ import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import photos from "./photos";
 
-function PhotosGallery() {
+const PhotosGallery = () => {
   const [index, setIndex] = useState(-1);
 
   return (
@@ -28,7 +28,7 @@ function PhotosGallery() {
         />
         <Lightbox
           slides={photos}
-          styles={Fullscreen}
+          styles={Fullscreen as any}
           open={index >= 0}
           index={index}
           close={() => setIndex(-1)}
@@ -38,6 +38,6 @@ function PhotosGallery() {
       </div>
     </section>
   );
-}
+};
 
 export default PhotosGallery;

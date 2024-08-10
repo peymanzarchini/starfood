@@ -6,7 +6,7 @@ import Serve from "../components/serve/Serve";
 import Team from "../components/team/Team";
 import Testimonials from "../components/testimonials/Testimonials";
 
-function Home() {
+const Home = () => {
   return (
     <>
       <section className="min-h-[89vh] w-[100%] bg-gray-200 bg-cover bg-center  pt-[3rem]">
@@ -22,6 +22,6 @@ function Home() {
       </section>
     </>
   );
-}
+};
 
 export default Home;

@@ -7,7 +7,7 @@ import { BsTwitter } from "react-icons/bs";
 import { BsInstagram } from "react-icons/bs";
 import { BsYoutube } from "react-icons/bs";
 
-function Team() {
+const Team = () => {
   return (
     <section className="w-[100%] pb-28 pt-52">
       <h1 className="mb-3 text-2xl font-bold text-starfood-colorText">Our Team</h1>
@@ -204,6 +204,6 @@ function Team() {
       </div>
     </section>
   );
-}
+};
 
 export default Team;

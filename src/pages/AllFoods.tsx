@@ -1,16 +1,16 @@
 import { BsSearch } from "react-icons/bs";
 import { useState } from "react";
-import products from "../assets/data/products";
+import products, { Product } from "../assets/data/products";
 import Foods from "../components/popular/Foods";
 
-function AllFoods() {
-  const [allProducts, setAllProducts] = useState(products);
-  const [query, setQuery] = useState("");
-  const [getSort, setSort] = useState("");
+const AllFoods = () => {
+  const [allProducts, setAllProducts] = useState<Product[]>(products);
+  const [query, setQuery] = useState<string>("");
+  const [getSort, setSort] = useState<string>("");
 
   const key = ["title"];
 
-  const handleSortItem = (e) => {
+  const handleSortItem = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === "all") {
       setSort(e.target.value);
       setAllProducts(products);
@@ -26,8 +26,15 @@ function AllFoods() {
     }
   };
 
-  const handleSearchItem = (data) => {
-    return data.filter((item) => key.some((k) => item[k].toLowerCase().includes(query)));
+  const handleSearchItem = (data: Product[]) => {
+    return data.filter((item) =>
+      key.some((k) => {
+        if (k === "title" && typeof item[k] === "string") {
+          return item[k].toLowerCase().includes(query.toLowerCase());
+        }
+        return false;
+      })
+    );
   };
 
   return (
@@ -77,6 +84,6 @@ function AllFoods() {
       </section>
     </>
   );
-}
+};
 
 export default AllFoods;

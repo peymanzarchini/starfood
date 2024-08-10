@@ -6,7 +6,7 @@ import mobileImg from "../../assets/images/Group 1.png";
 import labtopImg from "../../assets/images/Group 2.png";
 import tabletImg from "../../assets/images/Group 3.png";
 
-function Serve() {
+const Serve = () => {
   return (
     <section className="w-[100%] pt-40">
       <h2 className="mb-3 text-xl text-red-600">What we serve</h2>
@@ -82,6 +82,6 @@ function Serve() {
       </div>
     </section>
   );
-}
+};
 
 export default Serve;

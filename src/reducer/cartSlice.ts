@@ -1,28 +1,30 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  currentUser: null,
+export interface Icart {
+  id: number;
+  title: string;
+  price: number;
+  image: string;
+  category: string;
+  quantity: number;
+}
+[];
+
+const initialState: {
+  cart: Icart[];
+} = {
   cart: [],
 };
-
-const userSlice = createSlice({
+const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    signInSuccess: (state, action) => {
-      state.currentUser = action.payload;
-    },
-    signOutSuccess: (state, action) => {
-      state.currentUser = null;
-      state.cart = [];
-    },
     addCart: (state, action) => {
-      let existProduct = state.cart.filter((item) => item.id === action.payload.id);
-      if (existProduct < 1) {
+      let existProduct = state.cart.find((item) => item.id === action.payload.id);
+      if (!existProduct) {
         state.cart.push(action.payload);
       } else {
         alert("This product has already been added to the shopping cart.");
-        return state;
       }
     },
     removeCart: (state, action) => {
@@ -39,15 +41,15 @@ const userSlice = createSlice({
     decrease: (state, action) => {
       const { id } = action.payload;
       const itemInCart = state.cart.find((item) => item.id === id);
-      if (itemInCart.quantity === 1) {
+      if (itemInCart?.quantity === 1) {
         itemInCart.quantity = 1;
       } else {
-        itemInCart.quantity--;
+        itemInCart!.quantity--;
       }
     },
   },
 });
 
-export const { addCart, removeCart, increase, decrease, signInSuccess, signOutSuccess } =
-  userSlice.actions;
-export default userSlice.reducer;
+export const { addCart, removeCart, increase, decrease } = cartSlice.actions;
+
+export default cartSlice.reducer;

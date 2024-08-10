@@ -1,6 +1,6 @@
 import person from "../../assets/images/eating.jpg";
 
-function Register() {
+const Register = () => {
   return (
     <section className="w-[100%] pt-52">
       <div className="grid grid-cols-6 rounded-xl bg-gray-300">
@@ -86,7 +86,6 @@ function Register() {
       </div>
     </section>
   );
-}
+};
 
 export default Register;
-//sm:mt-[3.5rem] md:mt-[2rem]

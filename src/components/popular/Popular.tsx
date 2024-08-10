@@ -5,8 +5,8 @@ import products from "../../assets/data/products";
 import { useEffect, useState } from "react";
 import Foods from "./Foods";
 
-function Popular() {
-  const [category, setCategory] = useState("All");
+const Popular = () => {
+  const [category, setCategory] = useState<"All" | "Burger" | "Pizza" | "Bread">("All");
   const [allProducts, setAllProducts] = useState(products);
 
   useEffect(() => {
@@ -77,6 +77,6 @@ function Popular() {
       </div>
     </section>
   );
-}
+};
 
 export default Popular;

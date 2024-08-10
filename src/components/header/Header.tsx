@@ -10,8 +10,9 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { signOutSuccess } from "../../reducer/userSlice";
 import { Menu, Transition } from "@headlessui/react";
+import { RootState } from "../../app/index";
 
-function Header() {
+const Header = () => {
   const navlinks = [
     { display: "Home", path: "/" },
     { display: "About", path: "/about" },
@@ -25,8 +26,8 @@ function Header() {
   const location = useLocation();
   const dispatch = useDispatch();
 
-  const user = useSelector((state) => state.user.currentUser);
-  const cart = useSelector((state) => state.user.cart);
+  const user = useSelector((state: RootState) => state.user.currentUser);
+  const cart = useSelector((state: RootState) => state.cart.cart);
 
   useEffect(() => {
     function handleChangeSize() {
@@ -58,7 +59,7 @@ function Header() {
     setShowMenu(!showMenu);
   };
 
-  const changeActiveElement = (route) => {
+  const changeActiveElement = (route: string) => {
     if (route === location.pathname) {
       return true;
     }
@@ -106,7 +107,7 @@ function Header() {
                 <BsBasket fontSize={"23px"} className="cursor-pointer" />
                 {cart?.length > 0 ? (
                   <span className="absolute right-3 top-[-5px] z-0 mr-2 rounded-full bg-red-500 px-2.5 py-0.5 text-xs font-medium text-white">
-                    {cart.length}
+                    {cart?.length}
                   </span>
                 ) : null}
               </Link>
@@ -171,6 +172,6 @@ function Header() {
       </div>
     </header>
   );
-}
+};
 
 export default Header;
