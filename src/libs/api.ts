@@ -1,14 +1,9 @@
+import { TOKEN_KEYS } from "@/consts/tokenKey";
 import type { ApiResponse } from "@/types";
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { toast } from "sonner";
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
-
-const TOKEN_KEYS = {
-  ACCESS_TOKEN: "access_token",
-  REFRESH_TOKEN: "refresh_token",
-  USER: "user_data",
-} as const;
 
 export const apiClient = axios.create({
   baseURL: API_URL,
