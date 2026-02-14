@@ -5,8 +5,9 @@ import { TOKEN_KEYS } from "@/consts/tokenKey";
 import type { ChangePasswordInput } from "@/features/dashboard/profile/types";
 
 export const authApi = {
-  register: (data: RegisterInput) => {
-    apiClient.post<ApiResponse<User>>("/auth/register", data);
+  register: async (data: RegisterInput) => {
+    const response = await apiClient.post<ApiResponse<User>>("/auth/register", data);
+    return response.data.body;
   },
 
   login: async (data: LoginInput): Promise<LoginResponse> => {
@@ -28,11 +29,12 @@ export const authApi = {
     }
   },
 
-  refreshToken: () => {
-    apiClient.post<ApiResponse<{ accessToken: string }>>("/auth/refresh");
+  refreshToken: async (): Promise<{ accessToken: string }> => {
+    const response = await apiClient.post<ApiResponse<{ accessToken: string }>>("/auth/refresh");
+    return response.data.body;
   },
 
-  changePassword: (data: ChangePasswordInput) => {
-    apiClient.post<ApiResponse<null>>("/auth/change-password", data);
+  changePassword: async (data: ChangePasswordInput): Promise<void> => {
+    await apiClient.post<ApiResponse<null>>("/auth/change-password", data);
   },
 };

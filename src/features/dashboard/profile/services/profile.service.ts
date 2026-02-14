@@ -4,11 +4,13 @@ import type { ApiResponse } from "@/types";
 import type { UpdateProfileInput } from "../types";
 
 export const profileApi = {
-  getProfile: () => {
-    apiClient.get<ApiResponse<User>>("/auth/profile");
+  getProfile: async (): Promise<User> => {
+    const response = await apiClient.get<ApiResponse<User>>("/auth/profile");
+    return response.data.body;
   },
 
-  updateProfile: (data: UpdateProfileInput) => {
-    apiClient.patch<ApiResponse<User>>("/auth/profile", data);
+  updateProfile: async (data: UpdateProfileInput): Promise<User> => {
+    const response = await apiClient.patch<ApiResponse<User>>("/auth/profile", data);
+    return response.data.body;
   },
 };
