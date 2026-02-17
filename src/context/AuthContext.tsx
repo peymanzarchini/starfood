@@ -1,40 +1,25 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createContext, useState, useEffect, useCallback, type ReactNode } from "react";
 import { toast } from "sonner";
+import axios, { AxiosError } from "axios";
 
 import type { User, LoginInput, RegisterInput } from "@/features/auth/types";
-import type { ChangePasswordInput, UpdateProfileInput } from "@/features/dashboard/profile/types";
-
-import { tokenHelpers } from "@/utils/tokenHelpers";
+import type { ApiResponse } from "@/types";
 import { authApi } from "@/features/auth/services/auth.service";
 import { profileApi } from "@/features/dashboard/profile/services/profile.service";
 
-// ============================================
-// Types
-// ============================================
-
-export interface AuthContextType {
+interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   isAdmin: boolean;
-
-  login: (data: LoginInput) => Promise<User>;
+  login: (data: LoginInput) => Promise<void>;
   register: (data: RegisterInput) => Promise<void>;
   logout: () => Promise<void>;
-  updateProfile: (data: UpdateProfileInput) => Promise<void>;
-  changePassword: (data: ChangePasswordInput) => Promise<void>;
   checkAuth: () => Promise<void>;
 }
 
-// ============================================
-// Context
-// ============================================
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// ============================================
-// Provider
-// ============================================
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -42,30 +27,15 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Derived state
-  const isAuthenticated = !!user;
-  const isAdmin = user?.role === "admin";
-
-  // ============================================
-  // Check Authentication on Mount
-  // ============================================
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const checkAuth = useCallback(async () => {
     try {
       setIsLoading(true);
-
-      const token = tokenHelpers.getAccessToken();
-      if (!token) {
-        setUser(null);
-        return;
-      }
-
-      const profile = await profileApi.getProfile();
-      setUser(profile);
-    } catch {
-      tokenHelpers.clearTokens();
+      const userData = await profileApi.getProfile();
+      setUser(userData);
+    } catch (error) {
+      // If profile fetch fails, the user is considered unauthenticated
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -76,134 +46,67 @@ export function AuthProvider({ children }: AuthProviderProps) {
     checkAuth();
   }, [checkAuth]);
 
-  // ============================================
-  // Login
-  // ============================================
-
-  const login = async (data: LoginInput) => {
+  const login = async (data: LoginInput): Promise<void> => {
     try {
       setIsLoading(true);
-
       const response = await authApi.login(data);
-      const { user, accessToken } = response;
-
-      tokenHelpers.setTokens(accessToken, user);
-      setUser(user);
-
-      toast.success(`welcome ${user.firstName}!`);
-
-      return user;
+      setUser(response.user);
+      toast.success(`Welcome back, ${response.user.firstName}!`);
     } catch (error: unknown) {
-      const message =
-        (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        "Login failed";
-      toast.error(message);
+      let errorMessage = "Invalid email or password";
+
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<ApiResponse>;
+        errorMessage = axiosError.response?.data?.message || errorMessage;
+      }
+
+      toast.error(errorMessage);
       throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  // ============================================
-  // Register
-  // ============================================
-
-  const register = async (data: RegisterInput) => {
+  const register = async (data: RegisterInput): Promise<void> => {
     try {
       setIsLoading(true);
-
       await authApi.register(data);
-
-      toast.success("Registration was successful. Please log in.");
+      toast.success("Registration successful! You can now log in.");
     } catch (error: unknown) {
-      const message =
-        (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        "Registration failed";
-      toast.error(message);
+      let errorMessage = "Registration failed. Please try again.";
+
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<ApiResponse>;
+        errorMessage = axiosError.response?.data?.message || errorMessage;
+      }
+
+      toast.error(errorMessage);
       throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  // ============================================
-  // Logout
-  // ============================================
-
-  const logout = async () => {
+  const logout = async (): Promise<void> => {
     try {
       await authApi.logout();
-    } catch {
-      // Ignore logout API errors
+    } catch (error) {
+      console.error("Logout request failed:", error);
     } finally {
-      tokenHelpers.clearTokens();
       setUser(null);
-      toast.success("You have successfully logged out");
+      toast.success("Successfully logged out.");
+      window.location.href = "/login";
     }
   };
-
-  // ============================================
-  // Update Profile
-  // ============================================
-
-  const updateProfile = async (data: UpdateProfileInput) => {
-    try {
-      setIsLoading(true);
-
-      const updatedUser = await profileApi.updateProfile(data);
-
-      setUser(updatedUser);
-      tokenHelpers.setTokens(tokenHelpers.getAccessToken() || "", updatedUser);
-
-      toast.success("Profile updated successfully");
-    } catch (error: unknown) {
-      const message =
-        (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        "Profile update failed";
-      toast.error(message);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // ============================================
-  // Change Password
-  // ============================================
-
-  const changePassword = async (data: ChangePasswordInput) => {
-    try {
-      setIsLoading(true);
-
-      await authApi.changePassword(data);
-
-      toast.success("Password changed successfully");
-      await logout();
-    } catch (error: unknown) {
-      const message =
-        (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        "Password change failed";
-      toast.error(message);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // ============================================
-  // Context Value
-  // ============================================
 
   const value: AuthContextType = {
     user,
     isLoading,
-    isAuthenticated,
-    isAdmin,
+    isAuthenticated: !!user,
+    isAdmin: user?.role === "admin",
     login,
     register,
     logout,
-    updateProfile,
-    changePassword,
     checkAuth,
   };
 

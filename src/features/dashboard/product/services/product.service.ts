@@ -1,63 +1,84 @@
 import apiClient from "@/libs/api";
+import type { ApiResponse, PaginatedResponse } from "@/types";
 import type {
-  CreateProductInput,
-  GetProductsQuery,
   Product,
   ProductDetail,
+  GetProductsQuery,
+  CreateProductInput,
   UpdateProductInput,
+  ProductImage,
 } from "../types";
-import type { ApiResponse, PaginatedResponse } from "@/types";
 
 export const productsApi = {
-  //Public
-  getAll: (params?: GetProductsQuery) =>
-    apiClient.get<ApiResponse<PaginatedResponse<Product>>>("/products", { params }),
+  // --- Public Endpoints ---
+  getAll: async (params?: GetProductsQuery): Promise<PaginatedResponse<Product>> => {
+    const response = await apiClient.get<ApiResponse<PaginatedResponse<Product>>>("/products", {
+      params,
+    });
+    return response.data.body;
+  },
 
-  getById: (id: number) => apiClient.get<ApiResponse<ProductDetail>>(`/products/${id}`),
+  getById: async (id: number): Promise<ProductDetail> => {
+    const response = await apiClient.get<ApiResponse<ProductDetail>>(`/products/${id}`);
+    return response.data.body;
+  },
 
-  getPopular: (limit = 10) =>
-    apiClient.get<ApiResponse<Product[]>>("/products/popular", { params: { limit } }),
+  getPopular: async (limit: number = 10): Promise<Product[]> => {
+    const response = await apiClient.get<ApiResponse<Product[]>>("/products/popular", {
+      params: { limit },
+    });
+    return response.data.body;
+  },
 
-  getDiscounted: (limit = 10) =>
-    apiClient.get<ApiResponse<Product[]>>("/products/discounted", { params: { limit } }),
-  // Admin
+  getDiscounted: async (limit: number = 10): Promise<Product[]> => {
+    const response = await apiClient.get<ApiResponse<Product[]>>("/products/discounted", {
+      params: { limit },
+    });
+    return response.data.body;
+  },
+
+  // --- Admin Endpoints ---
   admin: {
-    getAll: (params?: GetProductsQuery & { isAvailable?: boolean }) =>
-      apiClient.get<ApiResponse<PaginatedResponse<Product>>>("/admin/products", { params }),
+    create: async (data: CreateProductInput): Promise<ProductDetail> => {
+      const response = await apiClient.post<ApiResponse<ProductDetail>>("/admin/products", data);
+      return response.data.body;
+    },
 
-    getById: (id: number) => apiClient.get<ApiResponse<ProductDetail>>(`/admin/products/${id}`),
+    update: async (id: number, data: UpdateProductInput): Promise<ProductDetail> => {
+      const response = await apiClient.put<ApiResponse<ProductDetail>>(
+        `/admin/products/${id}`,
+        data,
+      );
+      return response.data.body;
+    },
 
-    create: (data: CreateProductInput) =>
-      apiClient.post<ApiResponse<ProductDetail>>("/admin/products", data),
+    delete: async (id: number): Promise<void> => {
+      await apiClient.delete<ApiResponse<null>>(`/admin/products/${id}`);
+    },
 
-    update: (id: number, data: UpdateProductInput) =>
-      apiClient.put<ApiResponse<ProductDetail>>(`/admin/products/${id}`, data),
+    toggleAvailability: async (id: number): Promise<ProductDetail> => {
+      const response = await apiClient.patch<ApiResponse<ProductDetail>>(
+        `/admin/products/${id}/toggle-availability`,
+      );
+      return response.data.body;
+    },
 
-    delete: (id: number) => apiClient.delete<ApiResponse<null>>(`/admin/products/${id}`),
+    togglePopular: async (id: number): Promise<ProductDetail> => {
+      const response = await apiClient.patch<ApiResponse<ProductDetail>>(
+        `/admin/products/${id}/toggle-popular`,
+      );
+      return response.data.body;
+    },
 
-    toggleAvailability: (id: number) =>
-      apiClient.patch<ApiResponse<ProductDetail>>(`/admin/products/${id}/toggle-availability`),
-
-    togglePopular: (id: number) =>
-      apiClient.patch<ApiResponse<ProductDetail>>(`/admin/products/${id}/toggle-popular`),
-
-    // Product Images
-    addImage: (productId: number, data: { url: string; thumbnailUrl?: string; altText?: string }) =>
-      apiClient.post<ApiResponse<ProductDetail["gallery"][0]>>(
+    addImage: async (
+      productId: number,
+      data: { url: string; thumbnailUrl?: string; altText?: string },
+    ): Promise<ProductImage> => {
+      const response = await apiClient.post<ApiResponse<ProductImage>>(
         `/admin/products/${productId}/images`,
         data,
-      ),
-
-    updateImage: (
-      imageId: number,
-      data: { url?: string; thumbnailUrl?: string; altText?: string },
-    ) =>
-      apiClient.put<ApiResponse<ProductDetail["gallery"][0]>>(
-        `/admin/products/images/${imageId}`,
-        data,
-      ),
-
-    deleteImage: (imageId: number) =>
-      apiClient.delete<ApiResponse<null>>(`/admin/products/images/${imageId}`),
+      );
+      return response.data.body;
+    },
   },
 };

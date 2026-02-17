@@ -1,25 +1,17 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
-interface ProtectedRouteProps {
-  children?: React.ReactNode;
-}
-
-export function ProtectedRoute({ children }: ProtectedRouteProps) {
+export function ProtectedRoute() {
   const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
-    return (
-      <div>
-        <h1>loading...</h1>
-      </div>
-    );
+    return <div className="flex h-screen items-center justify-center">Loading...</div>;
   }
 
   if (!isAuthenticated) {
-    return <Navigate to={"/login"} state={{ from: location }} replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  return <>{children}</>;
+  return <Outlet />;
 }

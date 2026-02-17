@@ -4,10 +4,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { RouterProvider } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
-import { Toaster } from "sonner";
 import { routes } from "./routes";
 import "./index.css";
 import { AuthProvider } from "./context/AuthContext";
+import ToasterProvider from "./components/ui/customs/Sonner";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,7 +29,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <AuthProvider>
           <RouterProvider router={routes} />
           <ReactQueryDevtools initialIsOpen={false} />
-          <Toaster />
+          <ToasterProvider />
         </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>

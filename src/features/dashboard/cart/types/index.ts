@@ -32,3 +32,18 @@ export interface AddToCartInput {
 export interface UpdateCartItemInput {
   quantity: number;
 }
+
+export interface CartPreviewDiscount {
+  isValid: boolean;
+  cart: Cart;
+  discount: {
+    code: string;
+    type: "percentage" | "fixed";
+    value: number;
+  };
+  subtotal: number;
+  discountAmount: number;
+  deliveryCost: number;
+  totalAfterDiscount: number;
+  message: string;
+}

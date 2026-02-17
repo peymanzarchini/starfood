@@ -1,29 +1,43 @@
 import apiClient from "@/libs/api";
 import type { ApiResponse } from "@/types";
-import type { AddToCartInput, Cart, UpdateCartItemInput } from "../types";
+import type { Cart, AddToCartInput, UpdateCartItemInput, CartPreviewDiscount } from "../types";
 
 export const cartApi = {
-  get: () => apiClient.get<ApiResponse<Cart>>("/cart"),
+  get: async (): Promise<Cart> => {
+    const response = await apiClient.get<ApiResponse<Cart>>("/cart");
+    return response.data.body;
+  },
 
-  getCount: () => apiClient.get<ApiResponse<{ count: number }>>("/cart/count"),
+  addItem: async (data: AddToCartInput): Promise<Cart> => {
+    const response = await apiClient.post<ApiResponse<Cart>>("/cart/items", data);
+    return response.data.body;
+  },
 
-  validate: () =>
-    apiClient.get<
-      ApiResponse<{
-        isValid: boolean;
-        unavailableItems: string[];
-        cart: Cart;
-      }>
-    >("/cart/validate"),
+  updateItem: async (itemId: number, data: UpdateCartItemInput): Promise<Cart> => {
+    const response = await apiClient.patch<ApiResponse<Cart>>(`/cart/items/${itemId}`, data);
+    return response.data.body;
+  },
 
-  addItem: (data: AddToCartInput) => apiClient.post<ApiResponse<Cart>>("/cart/items", data),
+  removeItem: async (itemId: number): Promise<Cart> => {
+    const response = await apiClient.delete<ApiResponse<Cart>>(`/cart/items/${itemId}`);
+    return response.data.body;
+  },
 
-  updateItem: (itemId: number, data: UpdateCartItemInput) =>
-    apiClient.patch<ApiResponse<Cart>>(`/cart/items/${itemId}`, data),
+  previewDiscount: async (code: string): Promise<CartPreviewDiscount> => {
+    const response = await apiClient.get<ApiResponse<CartPreviewDiscount>>(
+      "/cart/preview-discount",
+      { params: { code } },
+    );
+    return response.data.body;
+  },
 
-  removeItem: (itemId: number) => apiClient.delete<ApiResponse<Cart>>(`/cart/items/${itemId}`),
+  clear: async (): Promise<Cart> => {
+    const response = await apiClient.delete<ApiResponse<Cart>>("/cart");
+    return response.data.body;
+  },
 
-  removeUnavailable: () => apiClient.delete<ApiResponse<Cart>>("/cart/unavailable"),
-
-  clear: () => apiClient.delete<ApiResponse<Cart>>("/cart"),
+  getCount: async (): Promise<number> => {
+    const response = await apiClient.get<ApiResponse<{ count: number }>>("/cart/count");
+    return response.data.body.count;
+  },
 };

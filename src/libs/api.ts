@@ -1,42 +1,28 @@
-import { TOKEN_KEYS } from "@/consts/tokenKey";
-import type { ApiResponse } from "@/types";
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
-import { toast } from "sonner";
+import type { ApiResponse } from "@/types";
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
 
+interface FailedRequest {
+  resolve: (value?: unknown) => void;
+  reject: (reason?: unknown) => void;
+}
+
 export const apiClient = axios.create({
   baseURL: API_URL,
-  timeout: 30000,
-  headers: {
-    "Content-Type": "application/json",
-  },
   withCredentials: true,
+  timeout: 15000,
 });
 
-apiClient.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem(TOKEN_KEYS.ACCESS_TOKEN);
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error),
-);
-
 let isRefreshing = false;
-let failedQueue: Array<{
-  resolve: (value: unknown) => void;
-  reject: (reason: unknown) => void;
-}> = [];
+let failedQueue: FailedRequest[] = [];
 
-const processQueue = (error: AxiosError | null, token: string | null = null) => {
-  failedQueue.forEach((prom) => {
+const processQueue = (error: AxiosError | Error | null): void => {
+  failedQueue.forEach((request) => {
     if (error) {
-      prom.reject(error);
+      request.reject(error);
     } else {
-      prom.resolve(token);
+      request.resolve();
     }
   });
   failedQueue = [];
@@ -47,54 +33,32 @@ apiClient.interceptors.response.use(
   async (error: AxiosError<ApiResponse>) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-    //Handle 401 errors
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
-          .then((token) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-            return apiClient(originalRequest);
-          })
-          .catch((err) => Promise.reject(err));
+          .then(() => apiClient(originalRequest))
+          .catch((err: unknown) => Promise.reject(err));
       }
 
       originalRequest._retry = true;
       isRefreshing = true;
 
       try {
-        const response =
-          await apiClient.post<ApiResponse<{ accessToken: string }>>("/auth/refresh");
-        const { accessToken } = response.data.body;
-        localStorage.setItem(TOKEN_KEYS.ACCESS_TOKEN, accessToken);
+        await axios.post(`${API_URL}/auth/refresh`, {}, { withCredentials: true });
 
-        processQueue(null, accessToken);
+        processQueue(null);
 
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return apiClient(originalRequest);
       } catch (refreshError) {
-        processQueue(refreshError as AxiosError, null);
+        const axiosError = refreshError as AxiosError;
+        processQueue(axiosError);
 
-        localStorage.removeItem(TOKEN_KEYS.ACCESS_TOKEN);
-        localStorage.removeItem(TOKEN_KEYS.USER);
-
-        toast.error("Your session has expired. Please log in again.");
-
-        if (window.location.pathname !== "/login") {
-          setTimeout(() => {
-            window.location.href = "/login";
-          }, 1500);
-        }
-
-        return Promise.reject(refreshError);
+        return Promise.reject(axiosError);
       } finally {
         isRefreshing = false;
       }
-    }
-    const message = error.response?.data?.message || "An error has occurred";
-    if (error.response?.status !== 401) {
-      toast.error(message);
     }
 
     return Promise.reject(error);

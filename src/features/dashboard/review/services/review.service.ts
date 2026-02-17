@@ -1,78 +1,81 @@
 import apiClient from "@/libs/api";
+import type { CreateReviewInput, ProductReviewsResponse, ReviewWithProduct } from "../types";
 import type { ApiResponse, PaginatedResponse } from "@/types";
-import type {
-  CreateReviewInput,
-  ProductReviewsResponse,
-  ReviewWithProduct,
-  UpdateReviewInput,
-} from "../types";
 
 export const reviewsApi = {
-  // Public
-  getByProduct: (productId: number, page = 1, limit = 10) =>
-    apiClient.get<ApiResponse<ProductReviewsResponse>>(`/products/${productId}/reviews`, {
-      params: { page, limit },
-    }),
+  // --- Public ---
+  getByProduct: async (
+    productId: number,
+    page = 1,
+    limit = 10,
+  ): Promise<ProductReviewsResponse> => {
+    const response = await apiClient.get<ApiResponse<ProductReviewsResponse>>(
+      `/products/${productId}/reviews`,
+      { params: { page, limit } },
+    );
+    return response.data.body;
+  },
 
-  // User
-  getMy: (page = 1, limit = 10) =>
-    apiClient.get<ApiResponse<PaginatedResponse<ReviewWithProduct>>>("/reviews/my", {
-      params: { page, limit },
-    }),
+  // --- User ---
+  getMyReviews: async (page = 1, limit = 10): Promise<PaginatedResponse<ReviewWithProduct>> => {
+    const response = await apiClient.get<ApiResponse<PaginatedResponse<ReviewWithProduct>>>(
+      "/reviews/my",
+      {
+        params: { page, limit },
+      },
+    );
+    return response.data.body;
+  },
 
-  canReview: (productId: number) =>
-    apiClient.get<ApiResponse<{ canReview: boolean; reason?: string }>>(
+  checkCanReview: async (productId: number): Promise<{ canReview: boolean; reason?: string }> => {
+    const response = await apiClient.get<ApiResponse<{ canReview: boolean; reason?: string }>>(
       `/reviews/can-review/${productId}`,
-    ),
+    );
+    return response.data.body;
+  },
 
-  create: (data: CreateReviewInput) =>
-    apiClient.post<ApiResponse<ReviewWithProduct>>("/reviews", data),
+  create: async (data: CreateReviewInput): Promise<ReviewWithProduct> => {
+    const response = await apiClient.post<ApiResponse<ReviewWithProduct>>("/reviews", data);
+    return response.data.body;
+  },
 
-  update: (id: number, data: UpdateReviewInput) =>
-    apiClient.put<ApiResponse<ReviewWithProduct>>(`/reviews/${id}`, data),
-
-  delete: (id: number) => apiClient.delete<ApiResponse<null>>(`/reviews/${id}`),
-
-  // Admin
+  // --- Admin ---
   admin: {
-    getAll: (params?: {
-      page?: number;
-      limit?: number;
+    getAll: async (params?: {
       isApproved?: boolean;
-      productId?: number;
       rating?: number;
-    }) =>
-      apiClient.get<ApiResponse<PaginatedResponse<ReviewWithProduct>>>("/admin/reviews", {
-        params,
-      }),
+      page?: number;
+    }): Promise<PaginatedResponse<ReviewWithProduct>> => {
+      const response = await apiClient.get<ApiResponse<PaginatedResponse<ReviewWithProduct>>>(
+        "/admin/reviews",
+        { params },
+      );
+      return response.data.body;
+    },
 
-    getById: (id: number) => apiClient.get<ApiResponse<ReviewWithProduct>>(`/admin/reviews/${id}`),
+    setApproval: async (id: number, isApproved: boolean): Promise<ReviewWithProduct> => {
+      const response = await apiClient.patch<ApiResponse<ReviewWithProduct>>(
+        `/admin/reviews/${id}/approval`,
+        { isApproved },
+      );
+      return response.data.body;
+    },
 
-    setApproval: (id: number, isApproved: boolean) =>
-      apiClient.patch<ApiResponse<ReviewWithProduct>>(`/admin/reviews/${id}/approval`, {
-        isApproved,
-      }),
+    getStats: async (): Promise<{
+      total: number;
+      pending: number;
+      approved: number;
+      averageRating: number;
+    }> => {
+      const response =
+        await apiClient.get<
+          ApiResponse<{ total: number; pending: number; approved: number; averageRating: number }>
+        >("/admin/reviews/stats");
+      return response.data.body;
+    },
 
-    delete: (id: number) => apiClient.delete<ApiResponse<null>>(`/admin/reviews/${id}`),
-
-    getStats: () =>
-      apiClient.get<
-        ApiResponse<{
-          total: number;
-          pending: number;
-          approved: number;
-          averageRating: number;
-        }>
-      >("/admin/reviews/stats"),
-
-    bulkApprove: (reviewIds: number[]) =>
-      apiClient.post<ApiResponse<{ affectedCount: number }>>("/admin/reviews/bulk-approve", {
-        reviewIds,
-      }),
-
-    bulkDelete: (reviewIds: number[]) =>
-      apiClient.post<ApiResponse<{ deletedCount: number }>>("/admin/reviews/bulk-delete", {
-        reviewIds,
-      }),
+    bulkDelete: async (reviewIds: number[]): Promise<void> => {
+      await apiClient.post<ApiResponse<null>>("/admin/reviews/bulk-delete", { reviewIds });
+    },
   },
 };

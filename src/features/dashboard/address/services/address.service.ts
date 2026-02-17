@@ -3,18 +3,27 @@ import type { ApiResponse } from "@/types";
 import type { Address, CreateAddressInput, UpdateAddressInput } from "../types";
 
 export const addressesApi = {
-  getAll: () => apiClient.get<ApiResponse<Address[]>>("/addresses"),
+  getAll: async (): Promise<Address[]> => {
+    const response = await apiClient.get<ApiResponse<Address[]>>("/addresses");
+    return response.data.body;
+  },
 
-  getById: (id: number) => apiClient.get<ApiResponse<Address>>(`/addresses/${id}`),
+  create: async (data: CreateAddressInput): Promise<Address> => {
+    const response = await apiClient.post<ApiResponse<Address>>("/addresses", data);
+    return response.data.body;
+  },
 
-  getDefault: () => apiClient.get<ApiResponse<Address | null>>("/addresses/default"),
+  update: async (id: number, data: UpdateAddressInput): Promise<Address> => {
+    const response = await apiClient.put<ApiResponse<Address>>(`/addresses/${id}`, data);
+    return response.data.body;
+  },
 
-  create: (data: CreateAddressInput) => apiClient.post<ApiResponse<Address>>("/addresses", data),
+  delete: async (id: number): Promise<void> => {
+    await apiClient.delete<ApiResponse<null>>(`/addresses/${id}`);
+  },
 
-  update: (id: number, data: UpdateAddressInput) =>
-    apiClient.put<ApiResponse<Address>>(`/addresses/${id}`, data),
-
-  setDefault: (id: number) => apiClient.patch<ApiResponse<Address>>(`/addresses/${id}/default`),
-
-  delete: (id: number) => apiClient.delete<ApiResponse<null>>(`/addresses/${id}`),
+  setDefault: async (id: number): Promise<Address> => {
+    const response = await apiClient.patch<ApiResponse<Address>>(`/addresses/${id}/default`);
+    return response.data.body;
+  },
 };
