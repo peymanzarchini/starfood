@@ -1,5 +1,9 @@
 import apiClient from "@/libs/api";
-import type { CreateReviewInput, ProductReviewsResponse, ReviewWithProduct } from "../types";
+import type {
+  CreateReviewInput,
+  ProductReviewsResponse,
+  ReviewWithProduct,
+} from "../features/dashboard/review/types";
 import type { ApiResponse, PaginatedResponse } from "@/types";
 
 export const reviewsApi = {

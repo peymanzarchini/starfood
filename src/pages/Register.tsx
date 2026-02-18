@@ -1,7 +1,20 @@
+import Container from "@/components/ui/customs/Container";
+import RegisterHeader from "@/features/auth/components/RegisterHeader";
+import RegisterForm from "@/features/auth/components/RegisterForm";
+import RegisterFooter from "@/features/auth/components/RegisterFooter";
+
 const RegisterPage = () => {
   return (
-    <div>
-      <h1>Register Page</h1>
+    <div className="min-h-[90vh] flex items-center justify-center py-16">
+      <Container className="max-w-125">
+        <div className="bg-bg-surface dark:bg-dark-bg-surface p-8 md:p-10 rounded-[3rem] shadow-2xl border border-slate-100 dark:border-slate-800">
+          <RegisterHeader />
+
+          <RegisterForm />
+
+          <RegisterFooter />
+        </div>
+      </Container>
     </div>
   );
 };

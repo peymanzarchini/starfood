@@ -6,7 +6,8 @@ import axios, { AxiosError } from "axios";
 import type { User, LoginInput, RegisterInput } from "@/features/auth/types";
 import type { ApiResponse } from "@/types";
 import { authApi } from "@/features/auth/services/auth.service";
-import { profileApi } from "@/features/dashboard/profile/services/profile.service";
+import { profileApi } from "@/services/profile.service";
+import type { ChangePasswordInput, UpdateProfileInput } from "@/features/dashboard/profile/types";
 
 interface AuthContextType {
   user: User | null;
@@ -17,6 +18,8 @@ interface AuthContextType {
   register: (data: RegisterInput) => Promise<void>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
+  changePassword: (data: ChangePasswordInput) => Promise<void>;
+  updateProfile: (data: UpdateProfileInput) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -99,6 +102,48 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  const changePassword = async (data: ChangePasswordInput): Promise<void> => {
+    try {
+      setIsLoading(true);
+      await authApi.changePassword(data);
+      toast.success("Password changed successfully! Please log in again.");
+      await logout(); // بعد از تغییر رمز، کاربر را خارج می‌کنیم تا دوباره لاگین کند
+    } catch (error: unknown) {
+      let errorMessage = "Failed to change password.";
+      if (axios.isAxiosError(error)) {
+        errorMessage = (error as AxiosError<ApiResponse>).response?.data?.message || errorMessage;
+      }
+      toast.error(errorMessage);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateProfile = async (data: UpdateProfileInput): Promise<void> => {
+    try {
+      setIsLoading(true); // Start loading for the button
+
+      // 1. Call the PATCH /auth/profile service
+      const updatedUser = await profileApi.updateProfile(data);
+
+      // 2. Update the global state with the user object returned in "body"
+      setUser(updatedUser);
+
+      // 3. Show success toast
+      toast.success("Profile updated successfully!");
+    } catch (error: unknown) {
+      let errorMessage = "Failed to update profile";
+      if (axios.isAxiosError(error)) {
+        errorMessage = (error as AxiosError<ApiResponse>).response?.data?.message || errorMessage;
+      }
+      toast.error(errorMessage);
+      throw error;
+    } finally {
+      setIsLoading(false); // Stop loading
+    }
+  };
+
   const value: AuthContextType = {
     user,
     isLoading,
@@ -108,6 +153,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     register,
     logout,
     checkAuth,
+    changePassword,
+    updateProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

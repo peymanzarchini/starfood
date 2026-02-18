@@ -1,6 +1,5 @@
 import MainLayout from "@/layouts/MainLayout";
 import HomePage from "@/pages/Home";
-import ProductDetailsPage from "@/pages/ProductDetails";
 import { createBrowserRouter } from "react-router-dom";
 import { PublicRoute } from "./PublicRoute";
 import LoginPage from "@/pages/Login";
@@ -17,6 +16,14 @@ import AdminProductsPage from "@/pages/admin/AdminProducts";
 import AdminCategoriesPage from "@/pages/admin/AdminCategories";
 import AdminOrdersPage from "@/pages/admin/AdminOrders";
 import AdminUsersPage from "@/pages/admin/AdminUsers";
+import FoodsPage from "@/pages/Foods";
+import FoodDetailsPage from "@/pages/FoodDetails";
+import CheckoutPage from "@/pages/Checkout";
+import OrderDetailsPage from "@/pages/OrderDetails";
+import { lazy, Suspense } from "react";
+import LoadingSpinner from "@/components/ui/customs/Loading";
+
+const AboutUsPage = lazy(() => import("@/pages/AboutUs"));
 
 export const routes = createBrowserRouter([
   {
@@ -24,8 +31,16 @@ export const routes = createBrowserRouter([
     element: <MainLayout />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: "about-us", element: <h1>About Us</h1> },
-      { path: "product/:id", element: <ProductDetailsPage /> },
+      {
+        path: "about-us",
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <AboutUsPage />
+          </Suspense>
+        ),
+      },
+      { path: "foods", element: <FoodsPage /> },
+      { path: "foods/:id", element: <FoodDetailsPage /> },
 
       // --- Guest Only Routes ---
       {
@@ -42,7 +57,9 @@ export const routes = createBrowserRouter([
         children: [
           { path: "profile", element: <ProfilePage /> },
           { path: "cart", element: <CartPage /> },
+          { path: "checkout", element: <CheckoutPage /> },
           { path: "orders", element: <OrdersPage /> },
+          { path: "orders/:id", element: <OrderDetailsPage /> },
           { path: "favorites", element: <FavoritePage /> },
         ],
       },

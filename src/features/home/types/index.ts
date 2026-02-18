@@ -1,3 +1,8 @@
+export interface CategorySectionProps {
+  selectedCategory: number | null;
+  onSelectCategory: (id: number | null) => void;
+}
+
 export interface CartProduct {
   id: number;
   name: string;

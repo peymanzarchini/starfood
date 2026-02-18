@@ -1,22 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-  /* ========================
-     🎨 BRAND COLORS
-  ======================== */
   --color-primary: #dc2626;
   --color-primary-hover: #b91c1c;
-
   --color-accent: #f59e0b;
 
-  /* 🌞 LIGHT */
   --color-bg-page: #f4f6f9;
   --color-bg-surface: #ffffff;
   --color-bg-soft: #eef2f7;
 
   --color-text-main: #0f172a;
   --color-text-muted: #475569;
-
   --color-border: #e2e8f0;
 
   --font-sans: "Inter", "system-ui", "sans-serif";
@@ -29,17 +23,23 @@
 
   --color-text-main: #f1f5f9;
   --color-text-muted: #94a3b8;
-
   --color-border: #334155;
 }
 
+/* --- Utilities --- */
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* --- Global Adjustments --- */
 * {
   outline: none;
 }
 
-/* ========================
-   BODY
-======================== */
 body {
   font-family: var(--font-sans);
   background-color: var(--color-bg-page);
@@ -49,51 +49,44 @@ body {
     color 0.3s ease;
 }
 
-.dark body {
-  background-color: var(--color-dark-bg-page);
-  color: var(--color-dark-text-main);
+/* --- Animations --- */
+@keyframes bounce-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
-/* ========================
-   ACTIVE ELEMENT
-======================== */
-.activeElement {
-  background-color: var(--color-primary-soft);
-  color: var(--color-primary);
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: 0.3s ease;
+.animate-bounce-slow {
+  animation: bounce-slow 4s ease-in-out infinite;
 }
 
-.dark .activeElement {
-  background-color: var(--color-dark-muted);
-  color: var(--color-primary);
+.custom-scrollbar::-webkit-scrollbar {
+  height: 5px;
 }
 
-/* ========================
-   SURFACE COMPONENT
-======================== */
-.surface {
-  background-color: var(--color-bg-surface);
-  border: 1px solid var(--color-border);
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.dark .surface {
-  background-color: var(--color-dark-surface);
-  border: 1px solid var(--color-dark-border);
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 20px;
+  transition: background 0.3s ease;
 }
 
-/* ========================
-   CARD CLIP FIX
-======================== */
-.card-clip::after {
-  position: absolute;
-  content: "";
-  width: 100%;
-  height: 100%;
-  background-color: var(--color-primary);
-  top: 0;
-  left: 0;
-  clip-path: polygon(100% 0, 100% 20%, 50% 50%, 0 20%, 0 0);
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: #dc2626;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #e2e8f0 transparent;
 }

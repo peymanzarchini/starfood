@@ -1,6 +1,11 @@
 import apiClient from "@/libs/api";
 import type { ApiResponse } from "@/types";
-import type { Cart, AddToCartInput, UpdateCartItemInput, CartPreviewDiscount } from "../types";
+import type {
+  Cart,
+  AddToCartInput,
+  UpdateCartItemInput,
+  CartPreviewDiscount,
+} from "../features/home/types";
 
 export const cartApi = {
   get: async (): Promise<Cart> => {

@@ -1,6 +1,6 @@
 import apiClient from "@/libs/api";
 import type { ApiResponse } from "@/types";
-import type { Favorite } from "../types";
+import type { Favorite } from "../features/dashboard/favorite/types";
 
 export const favoritesApi = {
   getAll: async (): Promise<Favorite[]> => {

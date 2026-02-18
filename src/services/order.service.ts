@@ -1,6 +1,12 @@
 import apiClient from "@/libs/api";
 import type { ApiResponse, PaginatedResponse } from "@/types";
-import type { Order, OrderList, CreateOrderInput, OrderStats, OrderStatus } from "../types";
+import type {
+  Order,
+  OrderList,
+  CreateOrderInput,
+  OrderStats,
+  OrderStatus,
+} from "@/features/dashboard/order/types";
 
 export const ordersApi = {
   // User Operations
@@ -17,6 +23,11 @@ export const ordersApi = {
 
   create: async (data: CreateOrderInput): Promise<Order> => {
     const response = await apiClient.post<ApiResponse<Order>>("/orders", data);
+    return response.data.body;
+  },
+
+  getOrderById: async (id: number): Promise<Order> => {
+    const response = await apiClient.get<ApiResponse<Order>>(`orders/${id}`);
     return response.data.body;
   },
 

@@ -41,6 +41,7 @@ export interface GetProductsQuery {
   maxPrice?: number;
   search?: string;
   isPopular?: boolean;
+  isAvailable?: boolean;
   sortBy?: "price" | "createdAt" | "name" | "discount";
   sortOrder?: "asc" | "desc";
 }
