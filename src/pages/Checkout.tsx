@@ -14,12 +14,12 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import Container from "@/components/ui/customs/Container";
+import Container from "@/components/ui/Container";
 import { cn } from "@/libs/utils";
-import { useCart } from "@/features/home/hooks/useCart";
 import { useAddresses } from "@/features/home/hooks/useAddresses";
-import { ordersApi } from "@/services/order.service";
+import { ordersApi } from "@/api/services/order.service";
 import { formatPrice } from "@/utils/formatPrice";
+import { useCart } from "@/modules/cart";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();

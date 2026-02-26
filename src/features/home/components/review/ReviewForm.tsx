@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Star, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { reviewsApi } from "@/services/review.service";
+import { reviewsApi } from "@/api/services/review.service";
 import { cn } from "@/libs/utils";
 import { reviewSchema, type ReviewFormValues } from "../../validation";
 

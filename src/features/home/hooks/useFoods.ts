@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { productsApi } from "@/features/dashboard/product/services/product.service";
+import { productsApi } from "@/api/services/product.service";
 import type { GetProductsQuery } from "@/features/dashboard/product/types";
 
 export const useFoods = (params: GetProductsQuery) => {

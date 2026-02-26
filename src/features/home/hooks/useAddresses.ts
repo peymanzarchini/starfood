@@ -1,5 +1,5 @@
 import type { CreateAddressInput } from "@/features/dashboard/address/types";
-import { addressesApi } from "@/services/address.service";
+import { addressesApi } from "@/api/services/address.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 

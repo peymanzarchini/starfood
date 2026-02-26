@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Package, MapPin, CreditCard, CheckCircle2 } from "lucide-react";
-import Container from "@/components/ui/customs/Container";
+import Container from "@/components/ui/Container";
 import { useOrderDetails } from "@/features/home/hooks/useOrders";
 import { formatPrice } from "@/utils/formatPrice";
 

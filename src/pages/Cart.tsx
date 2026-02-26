@@ -14,11 +14,11 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import Container from "@/components/ui/customs/Container";
-import { useCart } from "@/features/home/hooks/useCart";
-import { cartApi } from "@/services/cart.service";
-import type { CartPreviewDiscount } from "@/features/home/types";
+import Container from "@/components/ui/Container";
+import { cartApi } from "@/api/services/cart.service";
 import { formatPrice } from "@/utils/formatPrice";
+import { useCart } from "@/modules/cart";
+import type { CartPreviewDiscount } from "@/modules/cart/types";
 
 const CartPage = () => {
   const { cart, isLoading, updateQuantity, removeItem, clearCart } = useCart();

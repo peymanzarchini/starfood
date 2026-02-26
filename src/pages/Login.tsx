@@ -1,7 +1,7 @@
-import Container from "@/components/ui/customs/Container";
-import LoginHeader from "@/features/auth/components/LoginHeader";
-import LoginForm from "@/features/auth/components/LoginForm";
-import LoginFooter from "@/features/auth/components/LoginFooter";
+import Container from "@/components/ui/Container";
+import LoginHeader from "@/modules/auth/components/LoginHeader";
+import LoginForm from "@/modules/auth/components/LoginForm";
+import LoginFooter from "@/modules/auth/components/LoginFooter";
 
 const LoginPage = () => {
   return (

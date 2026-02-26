@@ -14,10 +14,11 @@ import {
   Circle,
 } from "lucide-react";
 
-import Container from "@/components/ui/customs/Container";
-import { useAuth } from "@/features/auth/hooks/useAuth";
+import Container from "@/components/ui/Container";
 import { cn } from "@/libs/utils";
 import { useAddresses } from "@/features/home/hooks/useAddresses";
+import { useAuth } from "@/modules/auth";
+import { useChangePassword, useUpdateProfile } from "@/modules/dashboard";
 
 // --- 1. Validation Schemas ---
 
@@ -50,7 +51,9 @@ type PasswordForm = z.infer<typeof passwordSchema>;
 type AddressForm = z.infer<typeof addressSchema>;
 
 const ProfilePage = () => {
-  const { user, updateProfile, changePassword, isLoading: authLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
+  const { mutate: updateProfile } = useUpdateProfile();
+  const { mutate: changePassword } = useChangePassword();
   const {
     addresses,
     isLoading: addrLoading,

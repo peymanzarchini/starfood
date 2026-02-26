@@ -1,7 +1,7 @@
-import Container from "@/components/ui/customs/Container";
-import RegisterHeader from "@/features/auth/components/RegisterHeader";
-import RegisterForm from "@/features/auth/components/RegisterForm";
-import RegisterFooter from "@/features/auth/components/RegisterFooter";
+import Container from "@/components/ui/Container";
+import RegisterHeader from "@/modules/auth/components/RegisterHeader";
+import RegisterForm from "@/modules/auth/components/RegisterForm";
+import RegisterFooter from "@/modules/auth/components/RegisterFooter";
 
 const RegisterPage = () => {
   return (

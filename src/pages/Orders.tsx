@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import Container from "@/components/ui/customs/Container";
+import Container from "@/components/ui/Container";
 import { cn } from "@/libs/utils";
 import type { OrderStatus } from "@/features/dashboard/order/types";
 import { useOrders } from "@/features/home/hooks/useOrders";

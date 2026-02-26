@@ -1,4 +1,4 @@
-import Container from "@/components/ui/customs/Container";
+import Container from "@/components/ui/Container";
 import ProductCard from "./ProductCard";
 import { useHomeProducts } from "@/features/home/hooks/useProducts";
 

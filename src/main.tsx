@@ -6,8 +6,8 @@ import { RouterProvider } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { routes } from "./routes";
 import "./index.css";
-import { AuthProvider } from "./context/AuthContext";
-import ToasterProvider from "./components/ui/customs/Sonner";
+import ToasterProvider from "./components/ui/Sonner";
+import { AuthProvider } from "./modules/auth";
 
 const queryClient = new QueryClient({
   defaultOptions: {

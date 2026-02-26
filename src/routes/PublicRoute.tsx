@@ -1,5 +1,5 @@
+import { useAuth } from "@/modules/auth";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAuth } from "@/features/auth/hooks/useAuth";
 
 export function PublicRoute() {
   const { isAuthenticated, isLoading } = useAuth();

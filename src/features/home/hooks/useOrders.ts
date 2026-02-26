@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { ordersApi } from "@/services/order.service";
+import { ordersApi } from "@/api/services/order.service";
 import type { OrderStatus } from "@/features/dashboard/order/types";
 
 export const useOrders = (page: number = 1, status?: OrderStatus) => {

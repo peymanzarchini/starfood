@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
 import { Search, SlidersHorizontal, ChevronLeft, ChevronRight, Utensils } from "lucide-react";
-import Container from "@/components/ui/customs/Container";
+import Container from "@/components/ui/Container";
 import { cn } from "@/libs/utils";
 import type { GetProductsQuery } from "@/features/dashboard/product/types";
 import { useFoods } from "@/features/home/hooks/useFoods";

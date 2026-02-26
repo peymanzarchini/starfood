@@ -1,4 +1,4 @@
-import { categoriesApi } from "@/services/category.service";
+import { categoriesApi } from "@/api/services/category.service";
 import { useQuery } from "@tanstack/react-query";
 
 export const useActiveCategories = () => {

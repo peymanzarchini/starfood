@@ -1,10 +1,10 @@
 // src/features/foods/components/ProductReviews.tsx
 import { Star, User as UserIcon, Lock } from "lucide-react";
 import { cn } from "@/libs/utils";
-import { useAuth } from "@/features/auth/hooks/useAuth";
 import { Link } from "react-router-dom";
 import type { ProductReviewsResponse } from "@/features/dashboard/review/types";
 import ReviewForm from "../review/ReviewForm";
+import { useAuth } from "@/modules/auth";
 
 interface ProductReviewsProps {
   productId: number;

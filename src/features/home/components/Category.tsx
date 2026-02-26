@@ -1,4 +1,4 @@
-import Container from "@/components/ui/customs/Container";
+import Container from "@/components/ui/Container";
 import { cn } from "@/libs/utils";
 import { useActiveCategories } from "../hooks/useGategories";
 

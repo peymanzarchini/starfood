@@ -21,7 +21,7 @@ import FoodDetailsPage from "@/pages/FoodDetails";
 import CheckoutPage from "@/pages/Checkout";
 import OrderDetailsPage from "@/pages/OrderDetails";
 import { lazy, Suspense } from "react";
-import LoadingSpinner from "@/components/ui/customs/Loading";
+import LoadingSpinner from "@/components/ui/Loading";
 
 const AboutUsPage = lazy(() => import("@/pages/AboutUs"));
 

@@ -15,13 +15,13 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import Container from "@/components/ui/customs/Container";
-import { useAuth } from "@/features/auth/hooks/useAuth";
+import Container from "@/components/ui/Container";
 import { cn } from "@/libs/utils";
 import { useFoodDetails } from "@/features/home/hooks/useFoodDetails";
 import { useProductReviews } from "@/features/home/hooks/useProductReviews";
 import ProductReviews from "@/features/home/components/products/ProductReviews";
-import { cartApi } from "@/services/cart.service";
+import { cartApi } from "@/api/services/cart.service";
+import { useAuth } from "@/modules/auth";
 
 const FoodDetailsPage = () => {
   const { id } = useParams<{ id: string }>();

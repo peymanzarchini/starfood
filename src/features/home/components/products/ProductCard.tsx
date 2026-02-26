@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
 import type { Product } from "@/features/dashboard/product/types";
-import { useAuth } from "@/features/auth/hooks/useAuth";
 import { cn } from "@/libs/utils";
-import { useCart } from "../../hooks/useCart";
 import { formatPrice } from "@/utils/formatPrice";
+import { useAuth } from "@/modules/auth";
+import { useCart } from "@/modules/cart";
 
 interface ProductCardProps {
   product: Product;

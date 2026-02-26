@@ -1,4 +1,4 @@
-import Container from "@/components/ui/customs/Container";
+import Container from "@/components/ui/Container";
 import { Link } from "react-router-dom";
 import heroImg from "@/assets/images/hero.webp";
 import { MoveRight, ShoppingBag } from "lucide-react";
