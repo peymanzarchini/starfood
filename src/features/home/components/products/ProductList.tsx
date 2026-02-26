@@ -1,6 +1,7 @@
 import Container from "@/components/ui/Container";
 import ProductCard from "./ProductCard";
 import { useHomeProducts } from "@/features/home/hooks/useProducts";
+import LoadingSpinner from "@/components/ui/Loading";
 
 interface ProductListProps {
   selectedCategory: number | null;
@@ -21,14 +22,7 @@ const ProductList = ({ selectedCategory }: ProductListProps) => {
       <Container>
         {/* Skeleton Loading */}
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-80 bg-gray-200 dark:bg-gray-800 animate-pulse rounded-3xl"
-              />
-            ))}
-          </div>
+          <LoadingSpinner />
         ) : data?.items.length === 0 ? (
           <div className="text-center py-20">
             <h3 className="text-xl font-bold text-text-muted text-center">

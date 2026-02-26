@@ -41,7 +41,6 @@ const LoadingSpinner = ({
           )}
         />
 
-        {/* آیکون مرکزی با انیمیشن نبضی (Pulse) */}
         <div className="relative z-10 text-primary animate-bounce-gentle">
           {variant === "pizza" && <Pizza size={currentSize.icon} />}
           {variant === "utensils" && <Utensils size={currentSize.icon} />}

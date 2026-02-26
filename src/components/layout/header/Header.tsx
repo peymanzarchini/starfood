@@ -57,7 +57,7 @@ const Header = () => {
                   to={link.to}
                   className={({ isActive }) =>
                     cn(
-                      "text-[15px] font-bold transition-all duration-300 hover:text-primary relative group",
+                      "text-base font-bold transition-all duration-300 hover:text-primary relative group",
                       isActive ? "text-primary" : "text-text-main",
                     )
                   }
