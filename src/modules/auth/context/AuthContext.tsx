@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { User } from "../types";
 import type { LoginFormValues, RegisterFormValues } from "../schemas/auth.schema";
 import { createContext } from "react";
@@ -11,7 +10,6 @@ interface AuthContextType {
   login: (data: LoginFormValues) => Promise<void>;
   register: (data: RegisterFormValues) => Promise<void>;
   logout: () => Promise<void>;
-  updateProfile: (data: any) => Promise<void>;
   checkAuth: () => Promise<void>;
 }
 

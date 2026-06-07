@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
@@ -16,22 +16,20 @@ import { toast } from "sonner";
 
 import Container from "@/components/ui/Container";
 import { cn } from "@/libs/utils";
-import { useAddresses } from "@/features/home/hooks/useAddresses";
-import { ordersApi } from "@/api/services/order.service";
-import { formatPrice } from "@/utils/formatPrice";
+import { useAddresses } from "@/modules/address";
+import { useCreateOrder } from "@/modules/order";
 import { useCart } from "@/modules/cart";
+import { formatPrice } from "@/utils/formatPrice";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
-  const { cart, clearCart, isLoading: cartLoading } = useCart();
+  const { cart, isLoading: cartLoading } = useCart();
   const { addresses, isLoading: addrLoading } = useAddresses();
+  const { mutate: createOrder, isPending: isSubmitting } = useCreateOrder();
 
-  // --- Local States ---
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
   const [notes, setNotes] = useState<string>("");
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // Automatically select the default address once addresses are loaded
   useEffect(() => {
     if (addresses.length > 0 && !selectedAddressId) {
       const defaultAddr = addresses.find((a) => a.isDefault) || addresses[0];
@@ -39,35 +37,22 @@ const CheckoutPage = () => {
     }
   }, [addresses, selectedAddressId]);
 
-  // --- Handlers ---
   const handlePlaceOrder = async () => {
     if (!selectedAddressId) {
       toast.error("Please select a delivery address to continue.");
       return;
     }
 
-    try {
-      setIsSubmitting(true);
-
-      // Sending data to your backend OrderController
-      const order = await ordersApi.create({
-        addressId: selectedAddressId,
-        notes: notes.trim() || undefined,
-      });
-
-      toast.success(`Order #${order.orderNumber} has been placed successfully!`);
-
-      // Clear the local cart state and redirect to orders tracking
-      await clearCart();
-      navigate("/orders", { replace: true });
-    } catch (error: unknown) {
-      // Errors are globally handled by the API Interceptor
-    } finally {
-      setIsSubmitting(false);
-    }
+    createOrder(
+      { addressId: selectedAddressId, notes: notes.trim() || undefined },
+      {
+        onSuccess: () => {
+          navigate("/orders", { replace: true });
+        },
+      },
+    );
   };
 
-  // Loading States
   if (cartLoading || addrLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
@@ -77,7 +62,6 @@ const CheckoutPage = () => {
     );
   }
 
-  // Redirect if cart is empty
   if (!cart || cart.items.length === 0) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center text-center">
@@ -96,13 +80,12 @@ const CheckoutPage = () => {
   return (
     <main className="bg-bg-page dark:bg-dark-bg-page py-10 md:py-16">
       <Container>
-        {/* Navigation Breadcrumb */}
         <Link
           to="/cart"
           className="flex items-center gap-2 text-text-muted font-bold mb-8 hover:text-primary transition-colors group"
         >
-          <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-          Back to Shopping Cart
+          <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Back
+          to Shopping Cart
         </Link>
 
         <h1 className="text-4xl md:text-5xl font-black text-text-main mb-12 tracking-tight italic">
@@ -110,9 +93,8 @@ const CheckoutPage = () => {
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-          {/* --- Left Column: Address & Notes --- */}
+          {/* Left Column: Address & Notes */}
           <div className="lg:col-span-2 space-y-10">
-            {/* 1. Address Selection Section */}
             <section className="space-y-6">
               <div className="flex items-center justify-between px-2">
                 <h3 className="text-2xl font-black text-text-main flex items-center gap-3">
@@ -143,7 +125,7 @@ const CheckoutPage = () => {
                       key={addr.id}
                       onClick={() => setSelectedAddressId(addr.id)}
                       className={cn(
-                        "p-6 rounded-[2.5rem] border-2 text-left transition-all duration-500 relative group overflow-hidden",
+                        "p-6 rounded-[2.5rem] border-2 text-left transition-all duration-500 relative group overflow-hidden cursor-pointer",
                         selectedAddressId === addr.id
                           ? "bg-primary/5 border-primary shadow-xl shadow-primary/10 -translate-y-1"
                           : "bg-bg-surface dark:bg-dark-bg-surface border-slate-100 dark:border-slate-800 hover:border-primary/30",
@@ -169,7 +151,6 @@ const CheckoutPage = () => {
               </div>
             </section>
 
-            {/* 2. Order Notes Section */}
             <section className="space-y-4">
               <h3 className="text-2xl font-black text-text-main flex items-center gap-3 px-2">
                 <ClipboardList size={26} className="text-primary" /> Delivery Instructions
@@ -177,23 +158,20 @@ const CheckoutPage = () => {
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Examples: Apartment number, gate code, or 'please leave the food at the door'..."
+                placeholder="Examples: Apartment number, gate code..."
                 rows={4}
                 className="w-full p-6 bg-bg-surface dark:bg-dark-bg-surface border border-slate-200 dark:border-slate-800 rounded-[2.5rem] focus:border-primary outline-none text-sm font-medium transition-all shadow-sm focus:ring-4 focus:ring-primary/5 resize-none"
               />
             </section>
           </div>
 
-          {/* --- Right Column: Order Summary Card --- */}
+          {/* Right Column: Order Summary Card */}
           <div className="lg:col-span-1">
             <div className="bg-bg-surface dark:bg-dark-bg-surface p-8 rounded-[3rem] shadow-2xl border border-slate-100 dark:border-slate-800 sticky top-28 overflow-hidden">
-              {/* Decorative background element */}
               <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl" />
-
               <h2 className="text-2xl font-black text-text-main mb-8 relative">Order Review</h2>
 
               <div className="space-y-6 relative">
-                {/* Mini Item List */}
                 <div className="max-h-45 overflow-y-auto pr-2 space-y-4 custom-scrollbar">
                   {cart.items.map((item) => (
                     <div key={item.id} className="flex justify-between items-center text-sm">
@@ -208,7 +186,6 @@ const CheckoutPage = () => {
                   ))}
                 </div>
 
-                {/* Price Breakdown */}
                 <div className="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-4">
                   <div className="flex justify-between text-text-muted font-bold text-sm">
                     <span>Food Subtotal</span>
@@ -218,7 +195,7 @@ const CheckoutPage = () => {
                     <span className="flex items-center gap-1.5">
                       <Truck size={16} /> Delivery Fee
                     </span>
-                    <span className="text-green-600">FREE</span>
+                    <span className="text-green-600">Calculated at next step</span>
                   </div>
 
                   <div className="flex justify-between items-end pt-4">
@@ -234,28 +211,19 @@ const CheckoutPage = () => {
                   </div>
                 </div>
 
-                {/* Submit Button */}
                 <button
                   onClick={handlePlaceOrder}
                   disabled={isSubmitting || !selectedAddressId}
-                  className="w-full py-5 bg-primary text-white rounded-4xl font-black shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-x-3 disabled:opacity-50 disabled:grayscale mt-6"
+                  className="w-full py-5 bg-primary text-white rounded-4xl font-black shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-x-3 disabled:opacity-50 disabled:grayscale mt-6 cursor-pointer"
                 >
                   {isSubmitting ? (
                     <Loader2 className="animate-spin" />
                   ) : (
                     <>
-                      <CreditCard size={22} />
-                      <span>Place Order Now</span>
+                      <CreditCard size={22} /> <span>Place Order Now</span>
                     </>
                   )}
                 </button>
-
-                <div className="flex items-center justify-center gap-2 mt-6 py-3 px-4 bg-bg-soft dark:bg-dark-bg-soft rounded-2xl">
-                  <CheckCircle2 size={14} className="text-green-500" />
-                  <span className="text-[10px] text-text-muted font-bold uppercase tracking-tight">
-                    Secure SSL Encrypted Checkout
-                  </span>
-                </div>
               </div>
             </div>
           </div>

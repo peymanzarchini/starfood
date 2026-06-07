@@ -1,4 +1,4 @@
-import { authApi } from "@/api/services/auth.service";
+import { authApi } from "@/modules/auth/services/auth.service";
 import { useAuth } from "@/modules/auth";
 import type { ApiResponse } from "@/types";
 import { useMutation } from "@tanstack/react-query";

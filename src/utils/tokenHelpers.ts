@@ -1,5 +1,5 @@
 import { TOKEN_KEYS } from "@/consts/tokenKey";
-import type { User } from "@/features/auth/types";
+import type { User } from "@/modules/auth";
 
 export const tokenHelpers = {
   getAccessToken: () => localStorage.getItem(TOKEN_KEYS.ACCESS_TOKEN),

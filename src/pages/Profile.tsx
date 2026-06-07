@@ -16,12 +16,11 @@ import {
 
 import Container from "@/components/ui/Container";
 import { cn } from "@/libs/utils";
-import { useAddresses } from "@/features/home/hooks/useAddresses";
+import { useAddresses } from "@/modules/address";
 import { useAuth } from "@/modules/auth";
-import { useChangePassword, useUpdateProfile } from "@/modules/dashboard";
+import { useUpdateProfile, useChangePassword } from "@/modules/profile";
 
-// --- 1. Validation Schemas ---
-
+// Schemas
 const profileSchema = z.object({
   firstName: z.string().min(2, "First name is too short"),
   lastName: z.string().min(2, "Last name is too short"),
@@ -40,7 +39,7 @@ const passwordSchema = z
   });
 
 const addressSchema = z.object({
-  title: z.string().min(2, "Title is required (e.g. Home, Office)"),
+  title: z.string().min(2, "Title is required"),
   street: z.string().min(5, "Street address is too short"),
   city: z.string().min(2, "City is required"),
   phoneNumber: z.string().regex(/^\+?[0-9]{10,15}$/, "Invalid phone number"),
@@ -51,22 +50,13 @@ type PasswordForm = z.infer<typeof passwordSchema>;
 type AddressForm = z.infer<typeof addressSchema>;
 
 const ProfilePage = () => {
-  const { user, isLoading: authLoading } = useAuth();
-  const { mutate: updateProfile } = useUpdateProfile();
-  const { mutate: changePassword } = useChangePassword();
-  const {
-    addresses,
-    isLoading: addrLoading,
-    createAddress,
-    deleteAddress,
-    setDefaultAddress,
-    isCreating,
-  } = useAddresses();
+  const { user } = useAuth();
+  const { mutate: updateProfile, isPending: isUpdatingProfile } = useUpdateProfile();
+  const { mutate: changePassword, isPending: isChangingPass } = useChangePassword();
+  const { addresses, createAddress, deleteAddress, setDefaultAddress, isCreating } = useAddresses();
 
   const [showAddrForm, setShowAddrForm] = useState(false);
   const [showPassForm, setShowPassForm] = useState(false);
-
-  // --- 2. Form Initializations with distinct names ---
 
   // Profile Form
   const {
@@ -88,7 +78,6 @@ const ProfilePage = () => {
     register: regPass,
     handleSubmit: handlePassSubmit,
     reset: resetPass,
-    formState: { errors: passErrors },
   } = useForm<PasswordForm>({
     resolver: zodResolver(passwordSchema),
   });
@@ -98,30 +87,23 @@ const ProfilePage = () => {
     register: regAddr,
     handleSubmit: handleAddrSubmit,
     reset: resetAddr,
-    formState: { errors: aErrors },
   } = useForm<AddressForm>({
     resolver: zodResolver(addressSchema),
   });
 
-  // 🔄 Sync the profile form whenever user data changes in AuthContext
   useEffect(() => {
-    if (user) {
+    if (user)
       resetProfile({
         firstName: user.firstName,
         lastName: user.lastName,
         phoneNumber: user.phoneNumber,
       });
-    }
   }, [user, resetProfile]);
 
-  // --- 3. Handlers ---
+  const onUpdateProfile = (data: ProfileForm) => updateProfile(data);
 
-  const onUpdateProfile = async (data: ProfileForm) => {
-    await updateProfile(data); // Calls PATCH /auth/profile
-  };
-
-  const onChangePass = async (data: PasswordForm) => {
-    await changePassword(data);
+  const onChangePass = (data: PasswordForm) => {
+    changePassword(data);
     setShowPassForm(false);
     resetPass();
   };
@@ -143,9 +125,8 @@ const ProfilePage = () => {
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-          {/* --- Left Column: Personal Info & Security --- */}
+          {/* Left Column: Personal Info & Security */}
           <div className="lg:col-span-4 space-y-8">
-            {/* 👤 Personal Details Card */}
             <div className="bg-bg-surface dark:bg-dark-bg-surface p-8 rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-slate-800">
               <h3 className="text-xl font-black text-text-main mb-6 flex items-center gap-2 italic">
                 <User size={20} className="text-primary" /> Personal Details
@@ -163,7 +144,6 @@ const ProfilePage = () => {
                     </p>
                   )}
                 </div>
-
                 <div className="space-y-1">
                   <input
                     {...regProfile("lastName")}
@@ -176,7 +156,6 @@ const ProfilePage = () => {
                     </p>
                   )}
                 </div>
-
                 <div className="space-y-1">
                   <input
                     {...regProfile("phoneNumber")}
@@ -189,13 +168,12 @@ const ProfilePage = () => {
                     </p>
                   )}
                 </div>
-
                 <button
                   type="submit"
-                  disabled={authLoading}
-                  className="w-full py-4 bg-primary text-white rounded-2xl font-black shadow-lg shadow-primary/20 cursor-pointer hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
+                  disabled={isUpdatingProfile}
+                  className="w-full py-4 bg-primary text-white rounded-2xl font-black shadow-lg shadow-primary/20 cursor-pointer hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center disabled:opacity-70"
                 >
-                  {authLoading ? (
+                  {isUpdatingProfile ? (
                     <Loader2 className="animate-spin" />
                   ) : (
                     <div className="flex items-center gap-2">
@@ -206,12 +184,10 @@ const ProfilePage = () => {
               </form>
             </div>
 
-            {/* 🔐 Security Section Card */}
             <div className="bg-bg-surface dark:bg-dark-bg-surface p-8 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800">
               <h3 className="text-xl font-black text-text-main mb-4 flex items-center gap-2 italic">
                 <ShieldCheck size={22} className="text-primary" /> Security
               </h3>
-
               {!showPassForm ? (
                 <button
                   onClick={() => setShowPassForm(true)}
@@ -224,56 +200,31 @@ const ProfilePage = () => {
                   onSubmit={handlePassSubmit(onChangePass)}
                   className="space-y-3 animate-in slide-in-from-top-2 duration-300"
                 >
-                  <div className="space-y-1">
-                    <input
-                      type="password"
-                      {...regPass("currentPassword")}
-                      placeholder="Current Password"
-                      size={1}
-                      className="w-full p-4 bg-bg-soft rounded-xl text-sm font-bold outline-none border focus:border-primary"
-                    />
-                    {passErrors.currentPassword && (
-                      <p className="text-red-500 text-[10px] font-bold ml-2">
-                        {passErrors.currentPassword.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="space-y-1">
-                    <input
-                      type="password"
-                      {...regPass("newPassword")}
-                      placeholder="New Password"
-                      size={1}
-                      className="w-full p-4 bg-bg-soft rounded-xl text-sm font-bold outline-none border focus:border-primary"
-                    />
-                    {passErrors.newPassword && (
-                      <p className="text-red-500 text-[10px] font-bold ml-2">
-                        {passErrors.newPassword.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="space-y-1">
-                    <input
-                      type="password"
-                      {...regPass("confirmPassword")}
-                      placeholder="Confirm Password"
-                      size={1}
-                      className="w-full p-4 bg-bg-soft rounded-xl text-sm font-bold outline-none border focus:border-primary"
-                    />
-                    {passErrors.confirmPassword && (
-                      <p className="text-red-500 text-[10px] font-bold ml-2">
-                        {passErrors.confirmPassword.message}
-                      </p>
-                    )}
-                  </div>
-
+                  <input
+                    type="password"
+                    {...regPass("currentPassword")}
+                    placeholder="Current Password"
+                    className="w-full p-4 bg-bg-soft rounded-xl text-sm font-bold outline-none border focus:border-primary"
+                  />
+                  <input
+                    type="password"
+                    {...regPass("newPassword")}
+                    placeholder="New Password"
+                    className="w-full p-4 bg-bg-soft rounded-xl text-sm font-bold outline-none border focus:border-primary"
+                  />
+                  <input
+                    type="password"
+                    {...regPass("confirmPassword")}
+                    placeholder="Confirm Password"
+                    className="w-full p-4 bg-bg-soft rounded-xl text-sm font-bold outline-none border focus:border-primary"
+                  />
                   <div className="flex gap-2 pt-2">
                     <button
                       type="submit"
-                      disabled={authLoading}
-                      className="flex-1 py-3 bg-text-main text-white dark:bg-white dark:text-text-main rounded-xl font-black text-xs cursor-pointer"
+                      disabled={isChangingPass}
+                      className="flex-1 py-3 bg-text-main text-white rounded-xl font-black text-xs cursor-pointer"
                     >
-                      {authLoading ? (
+                      {isChangingPass ? (
                         <Loader2 size={14} className="animate-spin mx-auto" />
                       ) : (
                         "Save"
@@ -282,7 +233,7 @@ const ProfilePage = () => {
                     <button
                       type="button"
                       onClick={() => setShowPassForm(false)}
-                      className="px-4 py-3 bg-slate-100 dark:bg-slate-800 text-text-main rounded-xl font-black text-xs cursor-pointer"
+                      className="px-4 py-3 bg-slate-100 text-text-main rounded-xl font-black text-xs cursor-pointer"
                     >
                       Cancel
                     </button>
@@ -292,7 +243,7 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* --- Right Column: Address Management --- */}
+          {/* Right Column: Address Management */}
           <div className="lg:col-span-8 space-y-8">
             <div className="bg-bg-surface dark:bg-dark-bg-surface p-8 md:p-10 rounded-[3rem] shadow-xl border border-slate-100 dark:border-slate-800">
               <div className="flex items-center justify-between mb-10">
@@ -300,9 +251,6 @@ const ProfilePage = () => {
                   <h3 className="text-2xl font-black text-text-main italic flex items-center gap-3">
                     <MapPin size={26} className="text-primary" /> Delivery Addresses
                   </h3>
-                  <p className="text-text-muted text-sm font-medium">
-                    Manage your delivery locations
-                  </p>
                 </div>
                 <button
                   onClick={() => setShowAddrForm(!showAddrForm)}
@@ -317,60 +265,39 @@ const ProfilePage = () => {
                 </button>
               </div>
 
-              {/* Add Address Form */}
               {showAddrForm && (
                 <form
                   onSubmit={handleAddrSubmit(onAddAddress)}
                   className="bg-bg-soft dark:bg-dark-bg-soft p-8 rounded-[2.5rem] mb-10 grid grid-cols-1 md:grid-cols-2 gap-5 animate-in slide-in-from-top-6 duration-500"
                 >
-                  <div className="md:col-span-2 space-y-1">
+                  <div className="md:col-span-2">
                     <input
                       {...regAddr("title")}
                       placeholder="Address Title (e.g. Home)"
                       className="w-full p-4 bg-bg-surface rounded-xl outline-none font-bold text-sm border border-transparent focus:border-primary transition-all"
                     />
-                    {aErrors.title && (
-                      <p className="text-red-500 text-[10px] font-bold ml-2">
-                        {aErrors.title.message}
-                      </p>
-                    )}
                   </div>
-                  <div className="space-y-1">
+                  <div>
                     <input
                       {...regAddr("city")}
                       placeholder="City"
                       className="w-full p-4 bg-bg-surface rounded-xl outline-none font-bold text-sm border border-transparent focus:border-primary transition-all"
                     />
-                    {aErrors.city && (
-                      <p className="text-red-500 text-[10px] font-bold ml-2">
-                        {aErrors.city.message}
-                      </p>
-                    )}
                   </div>
-                  <div className="space-y-1">
+                  <div>
                     <input
                       {...regAddr("phoneNumber")}
                       placeholder="Phone"
                       className="w-full p-4 bg-bg-surface rounded-xl outline-none font-bold text-sm border border-transparent focus:border-primary transition-all"
                     />
-                    {aErrors.phoneNumber && (
-                      <p className="text-red-500 text-[10px] font-bold ml-2">
-                        {aErrors.phoneNumber.message}
-                      </p>
-                    )}
                   </div>
-                  <div className="md:col-span-2 space-y-1">
+                  <div className="md:col-span-2">
                     <textarea
                       {...regAddr("street")}
                       placeholder="Full address details..."
                       rows={2}
                       className="w-full p-4 bg-bg-surface rounded-xl outline-none font-bold text-sm resize-none border border-transparent focus:border-primary transition-all"
                     />
-                    {aErrors.street && (
-                      <p className="text-red-500 text-[10px] font-bold ml-2">
-                        {aErrors.street.message}
-                      </p>
-                    )}
                   </div>
                   <div className="md:col-span-2 flex gap-3 pt-2">
                     <button
@@ -387,7 +314,7 @@ const ProfilePage = () => {
                     <button
                       type="button"
                       onClick={() => setShowAddrForm(false)}
-                      className="px-8 py-4 bg-slate-200 dark:bg-slate-700 text-text-main dark:text-white rounded-2xl font-black text-xs cursor-pointer"
+                      className="px-8 py-4 bg-slate-200 text-text-main rounded-2xl font-black text-xs cursor-pointer"
                     >
                       Cancel
                     </button>
@@ -395,13 +322,8 @@ const ProfilePage = () => {
                 </form>
               )}
 
-              {/* Address List */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {addrLoading ? (
-                  <div className="md:col-span-2 flex justify-center py-10">
-                    <Loader2 className="animate-spin text-primary" />
-                  </div>
-                ) : addresses.length === 0 ? (
+                {addresses.length === 0 ? (
                   <div className="md:col-span-2 py-16 text-center bg-bg-soft dark:bg-dark-bg-soft rounded-[2.5rem] border-2 border-dashed border-slate-200 dark:border-slate-800">
                     <MapPin size={48} className="mx-auto mb-4 text-slate-300" />
                     <p className="font-black text-text-muted">No delivery addresses yet.</p>
@@ -428,11 +350,9 @@ const ProfilePage = () => {
                           <Trash2 size={20} />
                         </button>
                       </div>
-
                       <p className="text-sm text-text-muted font-bold line-clamp-2 leading-relaxed mb-6">
                         {addr.fullAddress}
                       </p>
-
                       {addr.isDefault ? (
                         <div className="flex items-center gap-1.5 px-4 py-1.5 bg-primary text-white text-[10px] font-black uppercase rounded-full w-fit shadow-md shadow-primary/20">
                           <CheckCircle2 size={12} /> Default Address
@@ -440,7 +360,7 @@ const ProfilePage = () => {
                       ) : (
                         <button
                           onClick={() => setDefaultAddress(addr.id)}
-                          className="flex items-center gap-1.5 px-4 py-1.5 border border-slate-200 dark:border-slate-700 text-text-muted text-[10px] font-black uppercase rounded-full w-fit hover:border-primary hover:text-primary transition-all cursor-pointer"
+                          className="flex items-center gap-1.5 px-4 py-1.5 border border-slate-200 text-text-muted text-[10px] font-black uppercase rounded-full w-fit hover:border-primary hover:text-primary transition-all cursor-pointer"
                         >
                           <Circle size={12} /> Set as Default
                         </button>

@@ -1,13 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import type { User } from "../types";
-import { profileApi } from "@/api/services/profile.service";
 import type { LoginFormValues, RegisterFormValues } from "../schemas/auth.schema";
-import { authApi } from "@/api/services/auth.service";
 import { toast } from "sonner";
-import axios, { AxiosError } from "axios";
-import type { ApiResponse } from "@/types";
 import { AuthContext } from "./AuthContext";
+import { authApi } from "../services/auth.service";
+import { handleApiError } from "@/utils/handleApiError";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -16,9 +13,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const checkAuth = useCallback(async () => {
     try {
       setIsLoading(true);
-      const userData = await profileApi.getProfile();
+      const userData = await authApi.getProfile();
       setUser(userData);
     } catch (error) {
+      console.log(error);
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -35,11 +33,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await authApi.login(data);
       setUser(response.user);
       toast.success(`Welcome back, ${response.user.firstName}!`);
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<ApiResponse>;
-        toast.error(axiosError.response?.data.message || "Login failed");
-      }
+    } catch (error) {
+      handleApiError(error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -51,11 +46,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
       await authApi.register(data);
       toast.success("Account created! Please login.");
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<ApiResponse>;
-        toast.error(axiosError.response?.data?.message || "Registration failed");
-      }
+    } catch (error) {
+      handleApiError(error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -81,7 +73,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     register,
     logout,
     checkAuth,
-    updateProfile: async () => {},
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

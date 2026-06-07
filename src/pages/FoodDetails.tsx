@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
@@ -9,34 +8,34 @@ import {
   ChevronRight,
   Minus,
   Plus,
-  CheckCircle2,
-  MessageSquare,
   Info,
+  MessageSquare,
 } from "lucide-react";
 import { toast } from "sonner";
 
 import Container from "@/components/ui/Container";
 import { cn } from "@/libs/utils";
-import { useFoodDetails } from "@/features/home/hooks/useFoodDetails";
-import { useProductReviews } from "@/features/home/hooks/useProductReviews";
-import ProductReviews from "@/features/home/components/products/ProductReviews";
-import { cartApi } from "@/api/services/cart.service";
+import { useProductDetails } from "@/modules/product";
+import { ProductReviews } from "@/modules/review";
+import { useProductReviews } from "@/modules/review";
+import { useCart } from "@/modules/cart";
 import { useAuth } from "@/modules/auth";
+import { formatPrice } from "@/utils/formatPrice";
 
 const FoodDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const productId = Number(id);
   const { isAuthenticated } = useAuth();
 
-  // --- States ---
+  // States
   const [quantity, setQuantity] = useState<number>(1);
   const [activeTab, setActiveTab] = useState<"desc" | "reviews">("desc");
   const [selectedImg, setSelectedImg] = useState<string | null>(null);
-  const [isAdding, setIsAdding] = useState<boolean>(false);
 
-  // --- Fetch Data ---
-  const { data: product, isLoading, isError } = useFoodDetails(productId);
-  const { data: reviewData, refetch } = useProductReviews(productId);
+  // Hooks from Modules
+  const { data: product, isLoading, isError } = useProductDetails(productId);
+  const { reviewsData } = useProductReviews(productId);
+  const { addItem, isAdding } = useCart();
 
   if (isLoading)
     return (
@@ -58,22 +57,13 @@ const FoodDetailsPage = () => {
       toast.error("Please login to add items to your cart");
       return;
     }
-
-    try {
-      setIsAdding(true);
-      await cartApi.addItem({ productId: product.id, quantity });
-      toast.success(`${quantity} x ${product.name} added to cart successfully!`);
-    } catch (error) {
-      // Error handled by interceptor
-    } finally {
-      setIsAdding(false);
-    }
+    addItem({ productId: product.id, quantity });
   };
 
   return (
     <main className="bg-bg-page dark:bg-dark-bg-page py-10 md:py-20">
       <Container>
-        {/* --- Breadcrumbs --- */}
+        {/* Breadcrumbs */}
         <div className="flex items-center gap-2 text-sm font-bold text-text-muted mb-8">
           <Link to="/" className="hover:text-primary transition-colors">
             Home
@@ -87,7 +77,7 @@ const FoodDetailsPage = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-          {/* --- Left: Image Gallery --- */}
+          {/* Left: Image Gallery */}
           <div className="space-y-6">
             <div className="aspect-square bg-bg-surface dark:bg-dark-bg-surface rounded-[3rem] p-8 shadow-xl border border-slate-100 dark:border-slate-800 overflow-hidden group">
               <img
@@ -96,8 +86,6 @@ const FoodDetailsPage = () => {
                 className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700"
               />
             </div>
-
-            {/* Gallery Thumbnails */}
             {product.gallery && product.gallery.length > 0 && (
               <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
                 <button
@@ -129,7 +117,7 @@ const FoodDetailsPage = () => {
             )}
           </div>
 
-          {/* --- Right: Product Info --- */}
+          {/* Right: Product Info */}
           <div className="flex flex-col gap-y-6">
             <div>
               <span className="px-4 py-1.5 bg-primary/10 text-primary text-xs font-black uppercase tracking-widest rounded-full">
@@ -140,22 +128,22 @@ const FoodDetailsPage = () => {
               </h1>
               <div className="flex items-center gap-x-4 mt-4">
                 <div className="flex items-center gap-1 text-amber-500 font-black">
-                  <Star size={18} fill="currentColor" />
-                  <span>{reviewData?.stats.averageRating || "0.0"}</span>
+                  <Star size={18} fill="currentColor" />{" "}
+                  <span>{reviewsData?.stats.averageRating || "0.0"}</span>
                 </div>
                 <span className="text-text-muted font-bold text-sm">
-                  ({reviewData?.stats.totalReviews || 0} customer reviews)
+                  ({reviewsData?.stats.totalReviews || 0} customer reviews)
                 </span>
               </div>
             </div>
 
             <div className="flex items-center gap-x-6 py-4 border-y border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-2 text-text-muted font-bold">
-                <Clock size={20} className="text-primary" />
+                <Clock size={20} className="text-primary" />{" "}
                 <span>{product.preparationTime || 15} min</span>
               </div>
               <div className="flex items-center gap-2 text-text-muted font-bold">
-                <Flame size={20} className="text-primary" />
+                <Flame size={20} className="text-primary" />{" "}
                 <span>{product.calories || 350} kcal</span>
               </div>
             </div>
@@ -169,15 +157,16 @@ const FoodDetailsPage = () => {
                   Price
                 </span>
                 <div className="flex items-center gap-3">
-                  <span className="text-4xl font-black text-text-main">${product.finalPrice}</span>
+                  <span className="text-4xl font-black text-text-main">
+                    ${formatPrice(product.finalPrice)}
+                  </span>
                   {product.discount > 0 && (
                     <span className="text-xl text-text-muted line-through opacity-50">
-                      ${product.price}
+                      ${formatPrice(product.price)}
                     </span>
                   )}
                 </div>
               </div>
-
               <div className="flex items-center gap-2 bg-bg-soft dark:bg-dark-bg-soft p-2 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-inner">
                 <button
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
@@ -200,43 +189,41 @@ const FoodDetailsPage = () => {
               <button
                 onClick={handleAddToCart}
                 disabled={isAdding}
-                className="flex-1 py-5 bg-primary text-white rounded-4xl font-black shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-x-3 disabled:opacity-70"
+                className="flex-1 py-5 bg-primary text-white rounded-4xl font-black shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-x-3 disabled:opacity-70 cursor-pointer"
               >
                 {isAdding ? (
                   <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>
-                    {" "}
                     <ShoppingCart size={22} /> Add to Cart
                   </>
                 )}
               </button>
-              <button className="px-8 py-5 border-2 border-slate-200 dark:border-slate-800 text-text-main rounded-4xl font-black hover:bg-bg-soft transition-all">
-                Buy Now
-              </button>
             </div>
 
-            {/* Tags/Ingredients */}
-            <div className="flex flex-wrap gap-2 mt-4">
-              {product.ingredients.map((ing, idx) => (
-                <span
-                  key={idx}
-                  className="flex items-center gap-1.5 px-4 py-2 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-black rounded-xl"
-                >
-                  <CheckCircle2 size={14} /> {ing}
-                </span>
-              ))}
-            </div>
+            {/* Ingredients */}
+            {product.ingredients.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-4">
+                {product.ingredients.map((ing, idx) => (
+                  <span
+                    key={idx}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-black rounded-xl"
+                  >
+                    {ing}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* --- Lower Section: Tabs --- */}
+        {/* Tabs Section */}
         <div className="mt-20">
           <div className="flex gap-x-8 border-b border-slate-100 dark:border-slate-800">
             <button
               onClick={() => setActiveTab("desc")}
               className={cn(
-                "pb-4 text-lg font-black transition-all relative",
+                "pb-4 text-lg font-black transition-all relative cursor-pointer",
                 activeTab === "desc" ? "text-primary" : "text-text-muted opacity-50",
               )}
             >
@@ -250,12 +237,12 @@ const FoodDetailsPage = () => {
             <button
               onClick={() => setActiveTab("reviews")}
               className={cn(
-                "pb-4 text-lg font-black transition-all relative",
+                "pb-4 text-lg font-black transition-all relative cursor-pointer",
                 activeTab === "reviews" ? "text-primary" : "text-text-muted opacity-50",
               )}
             >
               <div className="flex items-center gap-2">
-                <MessageSquare size={20} /> Reviews ({reviewData?.stats.totalReviews || 0})
+                <MessageSquare size={20} /> Reviews ({reviewsData?.stats.totalReviews || 0})
               </div>
               {activeTab === "reviews" && (
                 <div className="absolute bottom-0 left-0 w-full h-1 bg-primary rounded-full" />
@@ -273,7 +260,7 @@ const FoodDetailsPage = () => {
               </div>
             ) : (
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <ProductReviews data={reviewData} productId={productId} refetch={refetch} />
+                <ProductReviews productId={productId} data={reviewsData} />
               </div>
             )}
           </div>

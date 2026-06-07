@@ -1,34 +1,31 @@
-import { cartApi } from "@/api/services/cart.service";
 import { useAuth } from "@/modules/auth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import type { AddToCartInput } from "../types";
+import { cartApi } from "../services/cart.service";
 
 export const useCart = () => {
   const { isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
 
-  // 1. Get Full Cart
   const cartQuery = useQuery({
     queryKey: ["cart"],
     queryFn: cartApi.get,
     enabled: isAuthenticated,
   });
 
-  // 2. Get Cart Count (For Header)
   const cartCountQuery = useQuery({
     queryKey: ["cart-count"],
     queryFn: cartApi.getCount,
     enabled: isAuthenticated,
-    staleTime: 0, // Always fresh
+    staleTime: 0,
   });
 
-  // Helper to refresh all cart data
   const refreshCart = () => {
     queryClient.invalidateQueries({ queryKey: ["cart"] });
     queryClient.invalidateQueries({ queryKey: ["cart-count"] });
   };
 
-  // 3. Add Item Mutation
   const addItemMutation = useMutation({
     mutationFn: cartApi.addItem,
     onSuccess: () => {
@@ -37,16 +34,14 @@ export const useCart = () => {
     },
   });
 
-  // 4. Update Quantity
   const updateQuantityMutation = useMutation({
     mutationFn: ({ itemId, quantity }: { itemId: number; quantity: number }) =>
       cartApi.updateItem(itemId, { quantity }),
     onSuccess: () => refreshCart(),
   });
 
-  // 5. Remove Item
   const removeItemMutation = useMutation({
-    mutationFn: (itemId: number) => cartApi.removeItem(itemId),
+    mutationFn: cartApi.removeItem,
     onSuccess: () => {
       refreshCart();
       toast.success("Item removed");
@@ -57,7 +52,7 @@ export const useCart = () => {
     cart: cartQuery.data,
     count: cartCountQuery.data || 0,
     isLoading: cartQuery.isLoading,
-    addItem: addItemMutation.mutate,
+    addItem: (data: AddToCartInput) => addItemMutation.mutate(data),
     isAdding: addItemMutation.isPending,
     updateQuantity: updateQuantityMutation.mutate,
     removeItem: removeItemMutation.mutate,

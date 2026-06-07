@@ -1,12 +1,16 @@
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Package, MapPin, CreditCard, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Package, MapPin, CreditCard, CheckCircle2, XCircle } from "lucide-react";
 import Container from "@/components/ui/Container";
-import { useOrderDetails } from "@/features/home/hooks/useOrders";
+import { useOrderDetails, useCancelOrder, StatusBadge } from "@/modules/order"; // ⭐ ماژول سفارشات
 import { formatPrice } from "@/utils/formatPrice";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 const OrderDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const { data: order, isLoading, isError } = useOrderDetails(Number(id));
+  const { mutate: cancelOrder, isPending: isCancelling } = useCancelOrder();
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
   if (isLoading)
     return (
@@ -20,6 +24,8 @@ const OrderDetailsPage = () => {
         Order not found.
       </div>
     );
+
+  const canCancel = order.status === "pending" || order.status === "confirmed";
 
   return (
     <main className="bg-bg-page dark:bg-dark-bg-page py-10 md:py-20 min-h-screen">
@@ -38,9 +44,12 @@ const OrderDetailsPage = () => {
               <p className="text-primary-foreground/80 font-bold uppercase tracking-widest text-xs mb-2">
                 Order Status
               </p>
-              <h2 className="text-4xl font-black capitalize tracking-tight italic">
-                {order.status}
-              </h2>
+              <div className="flex items-center gap-4">
+                <h2 className="text-4xl font-black capitalize tracking-tight italic">
+                  {order.status}
+                </h2>
+                <StatusBadge status={order.status} /> {/* ⭐ ماژول */}
+              </div>
             </div>
             <div className="text-center md:text-right font-black">
               <p className="text-xs uppercase opacity-80 mb-1">Order Number</p>
@@ -119,15 +128,56 @@ const OrderDetailsPage = () => {
               </section>
             </div>
 
-            {/* 4. Timeline (Visual Only) */}
-            <section className="pt-8 border-t border-slate-100 dark:border-slate-800 text-center">
-              <p className="text-[10px] text-text-muted font-black uppercase tracking-widest mb-2">
+            {/* 4. Actions & Timeline */}
+            <section className="pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col items-center gap-6">
+              <p className="text-[10px] text-text-muted font-black uppercase tracking-widest">
                 Created at: {new Date(order.createdAt).toLocaleString()}
               </p>
-              <div className="flex items-center justify-center gap-2 py-3 px-6 bg-green-500/10 text-green-600 rounded-full mx-auto">
-                <CheckCircle2 size={16} />
-                <span className="text-xs font-black uppercase">Verified Secure Transaction</span>
-              </div>
+
+              {/* دکمه لغو سفارش */}
+              {canCancel && !showCancelConfirm && (
+                <button
+                  onClick={() => setShowCancelConfirm(true)}
+                  className="px-8 py-3 border-2 border-red-200 dark:border-red-900 text-red-500 rounded-2xl font-black hover:bg-red-50 dark:hover:bg-red-900/20 transition-all cursor-pointer"
+                >
+                  Cancel Order
+                </button>
+              )}
+
+              {showCancelConfirm && (
+                <div className="bg-red-50 dark:bg-red-900/10 p-6 rounded-2xl border border-red-200 dark:border-red-900 text-center space-y-4 w-full max-w-sm">
+                  <XCircle size={32} className="text-red-500 mx-auto" />
+                  <p className="font-black text-text-main">Are you sure you want to cancel?</p>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() =>
+                        cancelOrder(order.id, { onSuccess: () => setShowCancelConfirm(false) })
+                      }
+                      disabled={isCancelling}
+                      className="flex-1 py-3 bg-red-500 text-white rounded-xl font-black text-xs cursor-pointer flex items-center justify-center gap-1 disabled:opacity-70"
+                    >
+                      {isCancelling ? (
+                        <Loader2 size={14} className="animate-spin" />
+                      ) : (
+                        "Yes, Cancel"
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setShowCancelConfirm(false)}
+                      className="flex-1 py-3 bg-slate-100 text-text-main rounded-xl font-black text-xs cursor-pointer"
+                    >
+                      No, Keep It
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {!canCancel && (
+                <div className="flex items-center justify-center gap-2 py-3 px-6 bg-green-500/10 text-green-600 rounded-full">
+                  <CheckCircle2 size={16} />
+                  <span className="text-xs font-black uppercase">Verified Secure Transaction</span>
+                </div>
+              )}
             </section>
           </div>
         </div>

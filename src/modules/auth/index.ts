@@ -1,5 +1,5 @@
-export * from "./context/AuthContext";
-export * from "./context/AuthProvider";
-export * from "./hooks/useAuth";
-export * from "./types";
-export * from "./schemas/auth.schema";
+export { AuthProvider } from "./context/AuthProvider";
+export { useAuth } from "./hooks/useAuth";
+export type { User, AuthResponse, LoginInput, RegisterInput, UserRole } from "./types";
+export { loginSchema, registerSchema } from "./schemas/auth.schema";
+export type { LoginFormValues, RegisterFormValues } from "./schemas/auth.schema";
