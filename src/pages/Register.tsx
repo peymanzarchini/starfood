@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import Container from "@/components/ui/Container";
 import { useAuth, registerSchema, type RegisterFormValues } from "@/modules/auth";
+import { handleApiError } from "@/utils/handleApiError";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ const RegisterPage = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -22,9 +24,10 @@ const RegisterPage = () => {
   const onSubmit = async (data: RegisterFormValues) => {
     try {
       await signupUser(data);
+      reset();
       navigate("/login");
     } catch (error) {
-      console.log(error);
+      handleApiError(error);
     }
   };
 
