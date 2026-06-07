@@ -18,6 +18,7 @@ const LoginPage = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -26,6 +27,7 @@ const LoginPage = () => {
   const onSubmit = async (data: LoginFormValues) => {
     try {
       await login(data);
+      reset();
       navigate(from, { replace: true });
     } catch (error) {
       handleApiError(error);
