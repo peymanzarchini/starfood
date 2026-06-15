@@ -34,7 +34,7 @@ const FoodDetailsPage = () => {
 
   // Hooks from Modules
   const { data: product, isLoading, isError } = useProductDetails(productId);
-  const { reviewsData } = useProductReviews(productId);
+  const { reviewsData, canReview } = useProductReviews(productId);
   const { addItem, isAdding } = useCart();
 
   if (isLoading)
@@ -129,10 +129,10 @@ const FoodDetailsPage = () => {
               <div className="flex items-center gap-x-4 mt-4">
                 <div className="flex items-center gap-1 text-amber-500 font-black">
                   <Star size={18} fill="currentColor" />{" "}
-                  <span>{reviewsData?.stats.averageRating || "0.0"}</span>
+                  <span>{reviewsData?.body.stats.averageRating || "0.0"}</span>
                 </div>
                 <span className="text-text-muted font-bold text-sm">
-                  ({reviewsData?.stats.totalReviews || 0} customer reviews)
+                  ({reviewsData?.body.stats.totalReviews || 0} customer reviews)
                 </span>
               </div>
             </div>
@@ -242,7 +242,7 @@ const FoodDetailsPage = () => {
               )}
             >
               <div className="flex items-center gap-2">
-                <MessageSquare size={20} /> Reviews ({reviewsData?.stats.totalReviews || 0})
+                <MessageSquare size={20} /> Reviews ({reviewsData?.body.stats.totalReviews || 0})
               </div>
               {activeTab === "reviews" && (
                 <div className="absolute bottom-0 left-0 w-full h-1 bg-primary rounded-full" />
@@ -260,7 +260,7 @@ const FoodDetailsPage = () => {
               </div>
             ) : (
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <ProductReviews productId={productId} data={reviewsData} />
+                <ProductReviews productId={productId} data={reviewsData} canReview={canReview} />
               </div>
             )}
           </div>

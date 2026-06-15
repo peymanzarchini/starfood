@@ -23,7 +23,7 @@ import { formatPrice } from "@/utils/formatPrice";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
-  const { cart, isLoading: cartLoading } = useCart();
+  const { cart, isLoading: cartLoading, appliedDiscount } = useCart();
   const { addresses, isLoading: addrLoading } = useAddresses();
   const { mutate: createOrder, isPending: isSubmitting } = useCreateOrder();
 
@@ -44,7 +44,11 @@ const CheckoutPage = () => {
     }
 
     createOrder(
-      { addressId: selectedAddressId, notes: notes.trim() || undefined },
+      {
+        addressId: selectedAddressId,
+        notes: notes.trim() || undefined,
+        discountCode: appliedDiscount?.discount.code,
+      },
       {
         onSuccess: () => {
           navigate("/orders", { replace: true });
@@ -77,6 +81,11 @@ const CheckoutPage = () => {
     );
   }
 
+  const subtotal = appliedDiscount ? appliedDiscount.subtotal : cart.total;
+  const deliveryCost = appliedDiscount ? appliedDiscount.deliveryCost : null;
+  const discountAmount = appliedDiscount ? appliedDiscount.discountAmount : 0;
+  const totalAmount = appliedDiscount ? appliedDiscount.totalAfterDiscount : cart.total;
+
   return (
     <main className="bg-bg-page dark:bg-dark-bg-page py-10 md:py-16">
       <Container>
@@ -93,7 +102,6 @@ const CheckoutPage = () => {
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-          {/* Left Column: Address & Notes */}
           <div className="lg:col-span-2 space-y-10">
             <section className="space-y-6">
               <div className="flex items-center justify-between px-2">
@@ -165,7 +173,6 @@ const CheckoutPage = () => {
             </section>
           </div>
 
-          {/* Right Column: Order Summary Card */}
           <div className="lg:col-span-1">
             <div className="bg-bg-surface dark:bg-dark-bg-surface p-8 rounded-[3rem] shadow-2xl border border-slate-100 dark:border-slate-800 sticky top-28 overflow-hidden">
               <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl" />
@@ -189,13 +196,27 @@ const CheckoutPage = () => {
                 <div className="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-4">
                   <div className="flex justify-between text-text-muted font-bold text-sm">
                     <span>Food Subtotal</span>
-                    <span>${formatPrice(cart.total)}</span>
+                    <span>${formatPrice(subtotal)}</span>
                   </div>
+
+                  {appliedDiscount && discountAmount > 0 && (
+                    <div className="flex justify-between text-green-500 font-bold text-sm">
+                      <span>Promo ({appliedDiscount.discount.code})</span>
+                      <span>-${formatPrice(discountAmount)}</span>
+                    </div>
+                  )}
+
                   <div className="flex justify-between text-text-muted font-bold text-sm">
                     <span className="flex items-center gap-1.5">
                       <Truck size={16} /> Delivery Fee
                     </span>
-                    <span className="text-green-600">Calculated at next step</span>
+                    <span className={deliveryCost === 0 ? "text-green-600" : ""}>
+                      {deliveryCost !== null
+                        ? deliveryCost === 0
+                          ? "FREE"
+                          : `$${formatPrice(deliveryCost)}`
+                        : "Calculated at next step"}
+                    </span>
                   </div>
 
                   <div className="flex justify-between items-end pt-4">
@@ -206,7 +227,7 @@ const CheckoutPage = () => {
                       <span className="text-text-main text-lg font-black">To be paid</span>
                     </div>
                     <span className="text-4xl font-black text-primary tracking-tighter">
-                      ${formatPrice(cart.total)}
+                      ${formatPrice(totalAmount)}
                     </span>
                   </div>
                 </div>

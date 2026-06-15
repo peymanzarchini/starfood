@@ -15,8 +15,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
       const userData = await authApi.getProfile();
       setUser(userData);
-    } catch (error) {
-      console.log(error);
+    } catch {
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -30,9 +29,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (data: LoginFormValues) => {
     try {
       setIsLoading(true);
-      const response = await authApi.login(data);
-      setUser(response.user);
-      toast.success(`Welcome back, ${response.user.firstName}!`);
+      const userData = await authApi.login(data);
+      setUser(userData);
+      toast.success(`Welcome back, ${userData.firstName}!`);
     } catch (error) {
       handleApiError(error);
       throw error;

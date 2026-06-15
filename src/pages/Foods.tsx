@@ -50,7 +50,6 @@ const FoodsPage = () => {
   return (
     <main className="min-h-screen bg-bg-page dark:bg-dark-bg-page py-12">
       <Container>
-        {/* Header Section */}
         <div className="flex flex-col items-center text-center mb-12">
           <div className="w-16 h-16 bg-primary/10 rounded-3xl flex items-center justify-center text-primary mb-4 rotate-3">
             <Utensils size={32} />
@@ -63,7 +62,6 @@ const FoodsPage = () => {
           </p>
         </div>
 
-        {/* Controls Section */}
         <div className="flex flex-col lg:flex-row gap-6 mb-12 items-center justify-between">
           <div className="relative w-full lg:max-w-md group">
             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted group-focus-within:text-primary transition-colors">
@@ -102,7 +100,6 @@ const FoodsPage = () => {
           </div>
         </div>
 
-        {/* Product Grid Display */}
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -118,31 +115,30 @@ const FoodsPage = () => {
               Failed to load the menu. Please check your connection.
             </p>
           </div>
-        ) : data?.items.length === 0 ? (
+        ) : data?.body.length === 0 ? (
           <div className="text-center py-20 bg-bg-surface dark:bg-dark-bg-surface rounded-[3rem] border-2 border-dashed border-slate-200 dark:border-slate-800">
             <h3 className="text-xl font-black text-text-main mb-2">No menu items found</h3>
             <p className="text-text-muted">Try a different search term or reset your filters.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {data?.items.map((product) => (
+            {data?.body.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
         )}
 
-        {/* Pagination */}
-        {!isLoading && data && data.pagination.totalPages > 1 && (
+        {!isLoading && data && data.totalPages > 1 && (
           <div className="flex justify-center items-center gap-4 mt-16">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={!data.pagination.hasPrevPage}
+              disabled={data.pageNumber <= 1} // محاسبه مستقیم از دیتای بک اند
               className="w-12 h-12 flex items-center justify-center rounded-full bg-bg-surface dark:bg-dark-bg-surface border border-slate-200 dark:border-slate-800 text-text-main disabled:opacity-30 transition-all hover:border-primary hover:text-primary shadow-sm active:scale-90 cursor-pointer"
             >
               <ChevronLeft size={24} />
             </button>
             <div className="flex items-center gap-2">
-              {Array.from({ length: data.pagination.totalPages }).map((_, i) => (
+              {Array.from({ length: data.totalPages }).map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setPage(i + 1)}
@@ -159,7 +155,7 @@ const FoodsPage = () => {
             </div>
             <button
               onClick={() => setPage((p) => p + 1)}
-              disabled={!data.pagination.hasNextPage}
+              disabled={data.pageNumber >= data.totalPages} // محاسبه مستقیم از دیتای بک اند
               className="w-12 h-12 flex items-center justify-center rounded-full bg-bg-surface dark:bg-dark-bg-surface border border-slate-200 dark:border-slate-800 text-text-main disabled:opacity-30 transition-all hover:border-primary hover:text-primary shadow-sm active:scale-90 cursor-pointer"
             >
               <ChevronRight size={24} />

@@ -39,7 +39,6 @@ const OrdersPage = () => {
             </p>
           </div>
 
-          {/* Status Filter */}
           <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
             {(["all", "pending", "delivering", "delivered", "cancelled"] as const).map((status) => (
               <button
@@ -61,7 +60,7 @@ const OrdersPage = () => {
           </div>
         </div>
 
-        {isError || !data || data.items.length === 0 ? (
+        {isError || !data || data.body.length === 0 ? (
           <div className="bg-bg-surface dark:bg-dark-bg-surface rounded-[3rem] p-16 border-2 border-dashed border-slate-100 dark:border-slate-800 text-center">
             <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
               <ShoppingBag size={32} />
@@ -79,7 +78,7 @@ const OrdersPage = () => {
           </div>
         ) : (
           <div className="grid gap-6">
-            {data.items.map((order) => (
+            {data.body.map((order) => (
               <div
                 key={order.id}
                 className="bg-bg-surface dark:bg-dark-bg-surface p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800 hover:shadow-xl transition-all duration-500 group"
@@ -94,7 +93,7 @@ const OrdersPage = () => {
                         <span className="text-lg font-black text-text-main">
                           #{order.orderNumber}
                         </span>
-                        <StatusBadge status={order.status} /> {/* ⭐ استفاده از کامپوننت ماژول */}
+                        <StatusBadge status={order.status} />
                       </div>
                       <div className="flex items-center gap-4 text-xs font-bold text-text-muted uppercase tracking-tighter">
                         <span className="flex items-center gap-1">
@@ -126,23 +125,40 @@ const OrdersPage = () => {
               </div>
             ))}
 
-            {/* Pagination */}
-            {data.pagination.totalPages > 1 && (
+            {data.totalPages > 1 && (
               <div className="flex justify-center gap-2 mt-10">
-                {Array.from({ length: data.pagination.totalPages }).map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setPage(i + 1)}
-                    className={cn(
-                      "w-10 h-10 rounded-xl font-black transition-all cursor-pointer",
-                      page === i + 1
-                        ? "bg-primary text-white shadow-lg"
-                        : "bg-bg-surface dark:bg-dark-bg-surface text-text-muted border border-slate-100 dark:border-slate-800 hover:border-primary/50",
-                    )}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={data.pageNumber <= 1}
+                  className="w-12 h-12 flex items-center justify-center rounded-full bg-bg-surface dark:bg-dark-bg-surface border border-slate-100 dark:border-slate-800 text-text-main disabled:opacity-30 transition-all hover:border-primary hover:text-primary shadow-sm active:scale-90 cursor-pointer"
+                >
+                  <ChevronRight size={24} className="rotate-180" />
+                </button>
+
+                <div className="flex items-center gap-2">
+                  {Array.from({ length: data.totalPages }).map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setPage(i + 1)}
+                      className={cn(
+                        "w-10 h-10 rounded-xl font-black transition-all cursor-pointer",
+                        page === i + 1
+                          ? "bg-primary text-white shadow-lg shadow-primary/40 scale-110"
+                          : "text-text-muted hover:bg-primary/10 hover:text-primary",
+                      )}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => setPage((p) => p + 1)}
+                  disabled={data.pageNumber >= data.totalPages}
+                  className="w-12 h-12 flex items-center justify-center rounded-full bg-bg-surface dark:bg-dark-bg-surface border border-slate-100 dark:border-slate-800 text-text-main disabled:opacity-30 transition-all hover:border-primary hover:text-primary shadow-sm active:scale-90 cursor-pointer"
+                >
+                  <ChevronRight size={24} />
+                </button>
               </div>
             )}
           </div>

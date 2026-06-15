@@ -1,12 +1,26 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingBag, Trash2, ArrowRight, CreditCard, Truck } from "lucide-react";
+import { ShoppingBag, Trash2, ArrowRight, CreditCard, Truck, Tag, XCircle } from "lucide-react";
 
 import Container from "@/components/ui/Container";
 import { useCart, CartItemCard } from "@/modules/cart";
 import { formatPrice } from "@/utils/formatPrice";
 
 const CartPage = () => {
-  const { cart, isLoading, count, updateQuantity, removeItem, clearCart } = useCart();
+  const {
+    cart,
+    isLoading,
+    count,
+    updateQuantity,
+    removeItem,
+    clearCart,
+    appliedDiscount,
+    applyDiscount,
+    isApplyingDiscount,
+    removeDiscount,
+  } = useCart();
+
+  const [discountCode, setDiscountCode] = useState("");
 
   if (isLoading)
     return (
@@ -34,6 +48,18 @@ const CartPage = () => {
       </div>
     );
   }
+
+  const handleApplyDiscount = () => {
+    if (discountCode.trim()) {
+      applyDiscount(discountCode.trim());
+    }
+  };
+
+  const subtotal = appliedDiscount ? appliedDiscount.subtotal : cart.subtotal;
+  const productDiscount = appliedDiscount ? 0 : cart.totalDiscount; // تخفیف خود محصولات
+  const couponDiscount = appliedDiscount ? appliedDiscount.discountAmount : 0;
+  const deliveryCost = appliedDiscount ? appliedDiscount.deliveryCost : null;
+  const totalAmount = appliedDiscount ? appliedDiscount.totalAfterDiscount : cart.total;
 
   return (
     <main className="bg-bg-page dark:bg-dark-bg-page py-10 md:py-20">
@@ -70,22 +96,77 @@ const CartPage = () => {
             <div className="bg-bg-surface dark:bg-dark-bg-surface p-8 rounded-[3rem] shadow-xl border border-slate-100 dark:border-slate-800 sticky top-28">
               <h2 className="text-2xl font-black text-text-main mb-6">Summary</h2>
 
+              {/* Discount Code Input */}
+              <div className="mb-8">
+                <label className="text-sm font-bold text-text-muted mb-2 flex items-center gap-1.5">
+                  <Tag size={16} /> Promo Code
+                </label>
+                {appliedDiscount ? (
+                  <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800 rounded-2xl">
+                    <span className="font-black text-green-600 uppercase tracking-widest text-sm">
+                      {appliedDiscount.discount.code}
+                    </span>
+                    <button
+                      onClick={removeDiscount}
+                      className="text-red-500 hover:text-red-700 cursor-pointer"
+                    >
+                      <XCircle size={20} />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={discountCode}
+                      onChange={(e) => setDiscountCode(e.target.value)}
+                      placeholder="Enter code..."
+                      className="flex-1 p-4 bg-bg-soft dark:bg-dark-bg-soft border border-slate-200 dark:border-slate-700 rounded-2xl focus:border-primary outline-none transition-all font-bold text-sm uppercase"
+                    />
+                    <button
+                      onClick={handleApplyDiscount}
+                      disabled={isApplyingDiscount || !discountCode.trim()}
+                      className="px-6 py-4 bg-text-main text-white rounded-2xl font-black text-sm hover:scale-95 active:scale-90 transition-all disabled:opacity-50 cursor-pointer"
+                    >
+                      {isApplyingDiscount ? "..." : "Apply"}
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <div className="space-y-4 mb-8">
                 <div className="flex justify-between text-text-muted font-bold">
                   <span>Subtotal</span>
-                  <span>${formatPrice(cart.total)}</span>
+                  <span>${formatPrice(subtotal)}</span>
                 </div>
+
+                {(productDiscount > 0 || couponDiscount > 0) && (
+                  <div className="flex justify-between text-green-500 font-bold">
+                    <span>
+                      Discount{" "}
+                      {appliedDiscount &&
+                        `(${appliedDiscount.discount.value}${appliedDiscount.discount.type === "percentage" ? "%" : "$"} Off)`}
+                    </span>
+                    <span>-${formatPrice(productDiscount + couponDiscount)}</span>
+                  </div>
+                )}
+
                 <div className="flex justify-between text-text-muted font-bold">
                   <span className="flex items-center gap-1">
                     <Truck size={16} /> Delivery Fee
                   </span>
-                  <span>Calculated at next step</span>
+                  <span className={deliveryCost === 0 ? "text-green-500" : ""}>
+                    {deliveryCost !== null
+                      ? deliveryCost === 0
+                        ? "FREE"
+                        : `$${formatPrice(deliveryCost)}`
+                      : "Calculated at next step"}
+                  </span>
                 </div>
 
                 <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-end">
                   <span className="text-text-main font-black">Total Amount</span>
                   <span className="text-3xl font-black text-primary">
-                    ${formatPrice(cart.total)}
+                    ${formatPrice(totalAmount)}
                   </span>
                 </div>
               </div>

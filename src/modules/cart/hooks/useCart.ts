@@ -1,12 +1,15 @@
+import { useState } from "react";
 import { useAuth } from "@/modules/auth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { AddToCartInput } from "../types";
+import type { AddToCartInput, PreviewDiscountResponse } from "../types";
 import { cartApi } from "../services/cart.service";
 
 export const useCart = () => {
   const { isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
+
+  const [appliedDiscount, setAppliedDiscount] = useState<PreviewDiscountResponse | null>(null);
 
   const cartQuery = useQuery({
     queryKey: ["cart"],
@@ -24,6 +27,8 @@ export const useCart = () => {
   const refreshCart = () => {
     queryClient.invalidateQueries({ queryKey: ["cart"] });
     queryClient.invalidateQueries({ queryKey: ["cart-count"] });
+
+    setAppliedDiscount(null);
   };
 
   const addItemMutation = useMutation({
@@ -48,6 +53,36 @@ export const useCart = () => {
     },
   });
 
+  const clearCartMutation = useMutation({
+    mutationFn: cartApi.clear,
+    onSuccess: () => {
+      refreshCart();
+      toast.success("Cart cleared");
+    },
+  });
+
+  const applyDiscountMutation = useMutation({
+    mutationFn: cartApi.previewDiscount,
+    onSuccess: (data) => {
+      if (data.isValid) {
+        setAppliedDiscount(data);
+        toast.success(data.message);
+      } else {
+        setAppliedDiscount(null);
+        toast.error(data.message);
+      }
+    },
+    onError: () => {
+      setAppliedDiscount(null);
+      toast.error("Failed to apply discount code");
+    },
+  });
+
+  const removeDiscount = () => {
+    setAppliedDiscount(null);
+    toast.info("Discount code removed");
+  };
+
   return {
     cart: cartQuery.data,
     count: cartCountQuery.data || 0,
@@ -56,6 +91,10 @@ export const useCart = () => {
     isAdding: addItemMutation.isPending,
     updateQuantity: updateQuantityMutation.mutate,
     removeItem: removeItemMutation.mutate,
-    clearCart: () => cartApi.clear().then(refreshCart),
+    clearCart: () => clearCartMutation.mutateAsync(undefined),
+    appliedDiscount,
+    applyDiscount: (code: string) => applyDiscountMutation.mutate(code),
+    isApplyingDiscount: applyDiscountMutation.isPending,
+    removeDiscount,
   };
 };

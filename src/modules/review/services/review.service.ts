@@ -1,11 +1,23 @@
 import apiClient from "@/api/client";
-import type { ApiResponse } from "@/types";
-import type { ProductReviewsResponse, CreateReviewInput, Review } from "../types";
+import type { ApiResponse, ApiPaginatedResponse } from "@/types";
+import type { ProductReviewsBody, CreateReviewInput, Review, CanReviewResponse } from "../types";
 
 export const reviewsApi = {
-  getByProduct: async (productId: number): Promise<ProductReviewsResponse> => {
-    const response = await apiClient.get<ApiResponse<ProductReviewsResponse>>(
+  getByProduct: async (
+    productId: number,
+    page = 1,
+    limit = 10,
+  ): Promise<ApiPaginatedResponse<ProductReviewsBody>> => {
+    const response = await apiClient.get<ApiPaginatedResponse<ProductReviewsBody>>(
       `/products/${productId}/reviews`,
+      { params: { page, limit } },
+    );
+    return response.data;
+  },
+
+  canReview: async (productId: number): Promise<CanReviewResponse> => {
+    const response = await apiClient.get<ApiResponse<CanReviewResponse>>(
+      `/reviews/can-review/${productId}`,
     );
     return response.data.body;
   },

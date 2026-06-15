@@ -1,4 +1,4 @@
-import { ShoppingCart, Star, Loader2 } from "lucide-react";
+import { ShoppingCart, Star, Loader2, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -7,6 +7,7 @@ import { cn } from "@/libs/utils";
 import { formatPrice } from "@/utils/formatPrice";
 import { useAuth } from "@/modules/auth";
 import { useCart } from "@/modules/cart";
+import { useFavorites } from "@/modules/favorite";
 
 interface ProductCardProps {
   product: Product;
@@ -15,6 +16,9 @@ interface ProductCardProps {
 export const ProductCard = ({ product }: ProductCardProps) => {
   const { isAuthenticated } = useAuth();
   const { addItem, isAdding } = useCart();
+  const { favorites, toggleFavorite, isToggling } = useFavorites();
+
+  const isFavorite = favorites.some((fav) => fav.productId === product.id);
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -28,9 +32,20 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     addItem({ productId: product.id, quantity: 1 });
   };
 
+  const handleToggleFavorite = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!isAuthenticated) {
+      toast.error("Please login first to add favorites");
+      return;
+    }
+
+    toggleFavorite(product.id);
+  };
+
   return (
     <div className="group relative bg-bg-surface dark:bg-dark-bg-surface rounded-[2.5rem] p-4 shadow-sm hover:shadow-2xl transition-all duration-500 border border-slate-100 dark:border-slate-800 hover:border-primary/20">
-      {/* Product Image Wrapper */}
       <Link
         to={`/foods/${product.id}`}
         className="block overflow-hidden rounded-4xl aspect-square bg-bg-soft dark:bg-dark-bg-soft relative"
@@ -41,7 +56,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700"
         />
 
-        {/* Status Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {product.isPopular && (
             <div className="bg-amber-400 text-white text-[10px] font-black px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-lg">
@@ -55,9 +69,28 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             {product.discount}% OFF
           </div>
         )}
+
+        <button
+          onClick={handleToggleFavorite}
+          disabled={isToggling}
+          className="absolute bottom-3 right-3 w-10 h-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110 active:scale-90 cursor-pointer z-10"
+        >
+          {isToggling ? (
+            <Loader2 size={18} className="animate-spin text-text-muted" />
+          ) : (
+            <Heart
+              size={20}
+              className={cn(
+                "transition-colors duration-300",
+                isFavorite
+                  ? "text-red-500 fill-red-500"
+                  : "text-slate-500 dark:text-slate-400 hover:text-red-400",
+              )}
+            />
+          )}
+        </button>
       </Link>
 
-      {/* Content Section */}
       <div className="mt-5 flex flex-col gap-y-1.5 px-1">
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-black text-primary uppercase tracking-[0.15em]">
@@ -76,7 +109,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           {product.description}
         </p>
 
-        {/* Pricing & Action Area */}
         <div className="mt-4 flex items-center justify-between">
           <div className="flex flex-col">
             {product.discount > 0 && (

@@ -14,23 +14,30 @@ export interface Review {
   updatedAt: string;
 }
 
-export interface ProductReviewsResponse {
-  reviews: Review[];
-  stats: {
-    averageRating: number;
-    totalReviews: number;
-    ratingDistribution: {
-      1: number;
-      2: number;
-      3: number;
-      4: number;
-      5: number;
-    };
+export interface ReviewStats {
+  averageRating: number;
+  totalReviews: number;
+  ratingDistribution: {
+    1: number;
+    2: number;
+    3: number;
+    4: number;
+    5: number;
   };
+}
+
+export interface ProductReviewsBody {
+  reviews: Review[];
+  stats: ReviewStats;
 }
 
 export interface CreateReviewInput {
   productId: number;
   rating: number;
   comment?: string;
+}
+
+export interface CanReviewResponse {
+  canReview: boolean;
+  reason?: string;
 }

@@ -1,5 +1,5 @@
 import apiClient from "@/api/client";
-import type { ApiResponse, PaginatedResponse } from "@/types";
+import type { ApiResponse, ApiPaginatedResponse } from "@/types";
 import type { Order, OrderList, CreateOrderInput, OrderStatus } from "../types";
 
 export const ordersApi = {
@@ -7,11 +7,11 @@ export const ordersApi = {
     page = 1,
     limit = 10,
     status?: OrderStatus,
-  ): Promise<PaginatedResponse<OrderList>> => {
-    const response = await apiClient.get<ApiResponse<PaginatedResponse<OrderList>>>("/orders", {
+  ): Promise<ApiPaginatedResponse<OrderList[]>> => {
+    const response = await apiClient.get<ApiPaginatedResponse<OrderList[]>>("/orders", {
       params: { page, limit, status },
     });
-    return response.data.body;
+    return response.data;
   },
 
   getOrderById: async (id: number): Promise<Order> => {
