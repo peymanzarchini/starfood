@@ -1,5 +1,5 @@
 import apiClient from "@/api/client";
-import type { ApiResponse, PaginatedResponse } from "@/types";
+import type { ApiResponse, ApiPaginatedResponse } from "@/types";
 import type {
   Product,
   ProductDetail,
@@ -10,12 +10,9 @@ import type {
 } from "../types";
 
 export const productsApi = {
-  // --- Public Endpoints ---
-  getAll: async (params?: GetProductsQuery): Promise<PaginatedResponse<Product>> => {
-    const response = await apiClient.get<ApiResponse<PaginatedResponse<Product>>>("/products", {
-      params,
-    });
-    return response.data.body;
+  getAll: async (params?: GetProductsQuery): Promise<ApiPaginatedResponse<Product[]>> => {
+    const response = await apiClient.get<ApiPaginatedResponse<Product[]>>("/products", { params });
+    return response.data;
   },
 
   getById: async (id: number): Promise<ProductDetail> => {
@@ -37,7 +34,6 @@ export const productsApi = {
     return response.data.body;
   },
 
-  // --- Admin Endpoints ---
   admin: {
     create: async (data: CreateProductInput): Promise<ProductDetail> => {
       const response = await apiClient.post<ApiResponse<ProductDetail>>("/admin/products", data);

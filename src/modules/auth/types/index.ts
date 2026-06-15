@@ -11,11 +11,6 @@ export interface User {
   updatedAt?: string;
 }
 
-export interface AuthResponse {
-  user: User;
-  accessToken: string;
-}
-
 export interface LoginInput {
   email: string;
   password: string;

@@ -23,13 +23,13 @@ export const ProductList = ({ queryOptions }: ProductListProps) => {
       <Container>
         {isLoading ? (
           <LoadingSpinner />
-        ) : data?.items.length === 0 ? (
+        ) : data?.body.length === 0 ? (
           <div className="text-center py-20">
             <h3 className="text-xl font-bold text-text-muted text-center">No products found.</h3>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {data?.items.map((product) => (
+            {data?.body.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>

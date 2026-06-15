@@ -1,7 +1,10 @@
 import { cn } from "@/libs/utils";
 import type { CategoryCardProps } from "../types";
+import { getCategoryIcon } from "@/utils/getCategoryIcon";
 
 const CategoryCard = ({ category, isSelected, onClick }: CategoryCardProps) => {
+  const categoryIcon = getCategoryIcon(category.name);
+
   return (
     <button
       onClick={onClick}
@@ -27,7 +30,9 @@ const CategoryCard = ({ category, isSelected, onClick }: CategoryCardProps) => {
             className="w-10 h-10 object-contain transition-transform duration-300 group-hover:scale-110"
           />
         ) : (
-          <span className="text-2xl">🍔</span>
+          <span className="text-3xl transition-transform duration-300 group-hover:scale-110">
+            {categoryIcon}
+          </span>
         )}
       </div>
 
