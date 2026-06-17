@@ -8,6 +8,22 @@ export interface Category {
   productCount?: number;
 }
 
+export interface CreateCategoryInput {
+  name: string;
+  description?: string;
+  imageUrl?: string;
+  displayOrder?: number;
+  isActive?: boolean;
+}
+
+export interface UpdateCategoryInput {
+  name?: string;
+  description?: string;
+  imageUrl?: string;
+  displayOrder?: number;
+  isActive?: boolean;
+}
+
 export interface CategorySectionProps {
   selectedCategory: number | null;
   onSelectCategory: (id: number | null) => void;

@@ -21,7 +21,7 @@ export const getCategoryIcon = (name: string): string => {
   if (lowerName.includes("seafood") || lowerName.includes("ماهی")) return "🐟";
   if (lowerName.includes("pasta") || lowerName.includes("پاستا")) return "🍝";
   if (lowerName.includes("breakfast") || lowerName.includes("صبح")) return "🥞";
-  if (lowerName.includes("kebab") || lowerName.includes("کباب")) return "🥩";
+  if (lowerName.includes("meat") || lowerName.includes("کباب")) return "🥩";
   if (lowerName.includes("soup") || lowerName.includes("سوپ")) return "🍲";
   if (lowerName.includes("sushi") || lowerName.includes("سوشی")) return "🍣";
   if (lowerName.includes("rice") || lowerName.includes("برنج")) return "🍚";

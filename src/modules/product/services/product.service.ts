@@ -35,6 +35,13 @@ export const productsApi = {
   },
 
   admin: {
+    getAll: async (params?: GetProductsQuery): Promise<ApiPaginatedResponse<Product[]>> => {
+      const response = await apiClient.get<ApiPaginatedResponse<Product[]>>("/admin/products", {
+        params,
+      });
+      return response.data;
+    },
+
     create: async (data: CreateProductInput): Promise<ProductDetail> => {
       const response = await apiClient.post<ApiResponse<ProductDetail>>("/admin/products", data);
       return response.data.body;

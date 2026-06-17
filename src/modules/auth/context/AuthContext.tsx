@@ -7,7 +7,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   isAdmin: boolean;
-  login: (data: LoginFormValues) => Promise<void>;
+  login: (data: LoginFormValues) => Promise<User>;
   register: (data: RegisterFormValues) => Promise<void>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;

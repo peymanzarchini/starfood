@@ -32,6 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userData = await authApi.login(data);
       setUser(userData);
       toast.success(`Welcome back, ${userData.firstName}!`);
+      return userData;
     } catch (error) {
       handleApiError(error);
       throw error;

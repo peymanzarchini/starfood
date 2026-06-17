@@ -26,9 +26,15 @@ const LoginPage = () => {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      await login(data);
+      const loggedInUser = await login(data);
       reset();
-      navigate(from, { replace: true });
+
+      if (loggedInUser.role === "admin") {
+        navigate("/admin", { replace: true });
+      } else {
+        const safeFrom = from.startsWith("/admin") ? "/" : from;
+        navigate(safeFrom, { replace: true });
+      }
     } catch (error) {
       handleApiError(error);
     }
