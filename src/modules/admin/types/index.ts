@@ -33,3 +33,30 @@ export interface ReviewStats {
   approved: number;
   averageRating: number;
 }
+
+export interface Discount {
+  id: number;
+  code: string;
+  type: "percentage" | "fixed";
+  value: number;
+  minOrderAmount: number;
+  maxDiscountAmount: number | null;
+  usageLimit: number;
+  usedCount: number;
+  startDate: string;
+  expireDate: string;
+  isActive: boolean;
+  isValid: boolean;
+}
+
+export interface CreateDiscountInput {
+  code: string;
+  type: "percentage" | "fixed";
+  value: number;
+  minOrderAmount?: number;
+  maxDiscountAmount?: number | null;
+  usageLimit?: number;
+  startDate?: string;
+  expireDate: string;
+  isActive?: boolean;
+}

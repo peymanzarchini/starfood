@@ -1,5 +1,14 @@
 import { Link, NavLink } from "react-router-dom";
-import { X, Home, UtensilsCrossed, Info, UserCircle, Package, LogOut } from "lucide-react";
+import {
+  X,
+  Home,
+  UtensilsCrossed,
+  Info,
+  UserCircle,
+  Package,
+  LogOut,
+  PhoneCall,
+} from "lucide-react";
 import { useAuth } from "@/modules/auth";
 import { cn } from "@/libs/utils";
 import Logo from "@/components/ui/Logo";
@@ -17,6 +26,7 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
     { to: "/", label: "Home", icon: <Home size={20} /> },
     { to: "/foods", label: "Our Menu", icon: <UtensilsCrossed size={20} /> },
     { to: "/about-us", label: "About Us", icon: <Info size={20} /> },
+    { to: "/contact-us", label: "Contact", icons: <PhoneCall size={20} /> },
   ];
 
   return (
