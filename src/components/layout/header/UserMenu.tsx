@@ -1,13 +1,24 @@
+// src/components/layout/header/UserMenu.tsx
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { User as UserIcon, LogOut, UserCircle, Package, Heart, ChevronDown } from "lucide-react";
+import {
+  User as UserIcon,
+  LogOut,
+  UserCircle,
+  Package,
+  Heart,
+  ChevronDown,
+  ShieldCheck,
+} from "lucide-react";
 import { useAuth } from "@/modules/auth";
 import { cn } from "@/libs/utils";
 
 const UserMenu = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, isAdmin } = useAuth();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  console.log(user);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -41,7 +52,19 @@ const UserMenu = () => {
             </p>
             <p className="text-sm font-black text-text-main truncate italic">{user?.email}</p>
           </div>
+
           <div className="space-y-1">
+            {isAdmin && (
+              <Link
+                to="/admin"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-3 p-3.5 bg-primary/5 hover:bg-primary/10 rounded-2xl text-sm font-black text-primary transition-colors"
+              >
+                <ShieldCheck size={18} className="text-primary" />
+                Admin Panel
+              </Link>
+            )}
+
             <Link
               to={"/profile"}
               onClick={() => setIsOpen(false)}
@@ -76,6 +99,7 @@ const UserMenu = () => {
               My Favorites
             </Link>
           </div>
+
           <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800/50">
             <button
               onClick={() => {

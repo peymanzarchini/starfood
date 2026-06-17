@@ -9,8 +9,11 @@ export const authApi = {
   },
 
   login: async (data: LoginInput): Promise<User> => {
-    const response = await apiClient.post<ApiResponse<User>>("/auth/login", data);
-    return response.data.body;
+    const response = await apiClient.post<ApiResponse<{ user: User; accessToken: string }>>(
+      "/auth/login",
+      data,
+    );
+    return response.data.body.user;
   },
 
   logout: async (): Promise<void> => {

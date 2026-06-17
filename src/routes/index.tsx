@@ -42,7 +42,6 @@ export const routes = createBrowserRouter([
       { path: "foods", element: <FoodsPage /> },
       { path: "foods/:id", element: <FoodDetailsPage /> },
 
-      // --- Guest Only Routes ---
       {
         element: <PublicRoute />,
         children: [
@@ -51,7 +50,6 @@ export const routes = createBrowserRouter([
         ],
       },
 
-      // --- Authenticated Customer Routes ---
       {
         element: <ProtectedRoute />,
         children: [
@@ -66,7 +64,6 @@ export const routes = createBrowserRouter([
     ],
   },
 
-  // --- Admin Only Routes ---
   {
     path: "/admin",
     element: <AdminRoute />,
