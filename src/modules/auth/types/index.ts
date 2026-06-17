@@ -1,4 +1,5 @@
 export type UserRole = "admin" | "customer";
+export type UserStatus = "active" | "banned";
 
 export interface User {
   id: number;
@@ -7,6 +8,7 @@ export interface User {
   email: string;
   phoneNumber: string;
   role: UserRole;
+  status: UserStatus;
   createdAt?: string;
   updatedAt?: string;
 }

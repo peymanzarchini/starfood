@@ -22,6 +22,8 @@ import CheckoutPage from "@/pages/Checkout";
 import OrderDetailsPage from "@/pages/OrderDetails";
 import { lazy, Suspense } from "react";
 import LoadingSpinner from "@/components/ui/Loading";
+import AdminDiscountsPage from "@/pages/admin/AdminDiscounts";
+import ContactUsPage from "@/pages/ContactUs";
 
 const AboutUsPage = lazy(() => import("@/pages/AboutUs"));
 
@@ -49,6 +51,7 @@ export const routes = createBrowserRouter([
           { path: "register", element: <RegisterPage /> },
         ],
       },
+      { path: "contact-us", element: <ContactUsPage /> },
 
       {
         element: <ProtectedRoute />,
@@ -76,6 +79,7 @@ export const routes = createBrowserRouter([
           { path: "categories", element: <AdminCategoriesPage /> },
           { path: "orders", element: <AdminOrdersPage /> },
           { path: "users", element: <AdminUsersPage /> },
+          { path: "discounts", element: <AdminDiscountsPage /> },
         ],
       },
     ],

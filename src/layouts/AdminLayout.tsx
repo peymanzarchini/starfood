@@ -11,6 +11,7 @@ import {
   X,
   Star,
   ExternalLink,
+  Tag,
 } from "lucide-react";
 import { useAuth } from "@/modules/auth";
 import { cn } from "@/libs/utils";
@@ -21,6 +22,7 @@ const navItems = [
   { to: "/admin/categories", label: "Categories", icon: <FolderTree size={20} />, end: false },
   { to: "/admin/orders", label: "Orders", icon: <ClipboardList size={20} />, end: false },
   { to: "/admin/users", label: "Users", icon: <Users size={20} />, end: false },
+  { to: "/admin/discounts", label: "Discounts", icon: <Tag size={20} />, end: false },
 ];
 
 const AdminLayout = () => {
